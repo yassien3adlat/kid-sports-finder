@@ -426,14 +426,14 @@ const Index = () => {
         <div className="orb orb-secondary w-80 h-80 bottom-0 right-0 opacity-[0.05]" />
 
         <div className="relative container mx-auto px-4 sm:px-6">
-          <AnimatedSection className="text-center mb-14">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
+          <AnimatedSection className="text-center mb-10 sm:mb-14">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-4 sm:mb-5 border border-primary/10">
               <Star className="w-3.5 h-3.5" /> آراء المستخدمين
             </span>
-            <h2 id="testimonials-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground mb-3 leading-tight">
+            <h2 id="testimonials-heading" className="text-2xl sm:text-3xl md:text-[2.75rem] font-black text-foreground mb-2 sm:mb-3 leading-tight">
               ماذا يقول أولياء الأمور؟
             </h2>
-            <p className="text-muted-foreground text-base">أكثر من 500 عائلة استفادت من Helm</p>
+            <p className="text-muted-foreground text-sm sm:text-base">أكثر من 500 عائلة استفادت من Helm</p>
           </AnimatedSection>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
