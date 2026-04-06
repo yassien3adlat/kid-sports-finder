@@ -314,7 +314,7 @@ const Index = () => {
             كل ما يحتاجه طفلك في مكان واحد
           </h2>
           <div className="line-accent mx-auto mb-4" />
-          <p className="text-muted-foreground max-w-lg mx-auto text-base">
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base">
             نظام متكامل لاكتشاف المواهب الرياضية وتطويرها بطريقة علمية ومدروسة
           </p>
         </AnimatedSection>
