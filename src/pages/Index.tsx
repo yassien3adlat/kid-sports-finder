@@ -436,7 +436,7 @@ const Index = () => {
             <p className="text-muted-foreground text-sm sm:text-base">أكثر من 500 عائلة استفادت من Helm</p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 max-w-6xl mx-auto">
             {testimonials.map((t, i) => (
               <AnimatedSection key={i} delay={i * 100}>
                 <Card className="card-premium border-border/30 h-full bg-card/80 backdrop-blur-sm">
