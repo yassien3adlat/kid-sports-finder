@@ -323,7 +323,7 @@ const Index = () => {
           {features.map((feature, i) => (
             <AnimatedSection key={i} delay={i * 100}>
               <Card className="card-premium border-border/30 group h-full bg-card/80 backdrop-blur-sm">
-                <CardContent className="p-7">
+                <CardContent className="p-5 sm:p-7">
                   <div className={cn(
                     "feature-icon w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm",
                     feature.color
