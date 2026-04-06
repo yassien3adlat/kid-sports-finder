@@ -325,10 +325,10 @@ const Index = () => {
               <Card className="card-premium border-border/30 group h-full bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-5 sm:p-7">
                   <div className={cn(
-                    "feature-icon w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm",
+                    "feature-icon w-12 sm:w-14 h-12 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm",
                     feature.color
                   )}>
-                    <feature.icon className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
+                    <feature.icon className="w-6 sm:w-7 h-6 sm:h-7 text-primary-foreground" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-bold text-foreground mb-2.5">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
