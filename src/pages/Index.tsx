@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useInView } from "@/hooks/useInView";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -9,8 +9,9 @@ import {
   Sparkles, Shield, Star, Quote, CheckCircle2, ArrowLeft, Zap, Heart,
   ChevronDown, MessageSquare, Award, Rocket, Clock, Play, ArrowDown,
 } from "lucide-react";
-import heroImage from "@/assets/hero-kids-sports.jpg";
 import { cn } from "@/lib/utils";
+
+const HeroScene3D = lazy(() => import("@/components/HeroScene3D"));
 
 const features = [
   { icon: Users, title: "تسجيل الأطفال", description: "سجّل بيانات أطفالك بسهولة وتابع تطورهم الرياضي مع ملفات شخصية متكاملة", color: "from-primary to-emerald-500" },
@@ -161,9 +162,11 @@ const Index = () => {
         role="navigation"
         aria-label="التنقل الرئيسي"
         style={{
-          background: `hsl(var(--card) / ${0.6 + navOpacity * 0.3})`,
+          background: navOpacity > 0.5
+            ? `hsl(var(--card) / ${0.6 + navOpacity * 0.3})`
+            : `rgba(0,0,0,${navOpacity * 0.4})`,
           backdropFilter: `blur(${8 + navOpacity * 16}px) saturate(${1 + navOpacity * 0.8})`,
-          borderBottom: `1px solid hsl(var(--border) / ${navOpacity * 0.5})`,
+          borderBottom: `1px solid ${navOpacity > 0.5 ? `hsl(var(--border) / ${navOpacity * 0.5})` : `rgba(255,255,255,${navOpacity * 0.08})`}`,
           boxShadow: navOpacity > 0.5 ? 'var(--shadow-sm)' : 'none',
         }}
       >
@@ -173,8 +176,8 @@ const Index = () => {
               <Trophy className="w-5 h-5 text-primary-foreground" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-black text-foreground leading-none">Helm</span>
-              <span className="text-[9px] text-muted-foreground leading-none mt-0.5 hidden sm:block">اكتشف رياضة طفلك</span>
+              <span className={cn("text-xl font-black leading-none transition-colors", navOpacity > 0.5 ? "text-foreground" : "text-white")}>Helm</span>
+              <span className={cn("text-[9px] leading-none mt-0.5 hidden sm:block transition-colors", navOpacity > 0.5 ? "text-muted-foreground" : "text-white/50")}>اكتشف رياضة طفلك</span>
             </div>
           </div>
           <div className="flex items-center gap-2.5">
@@ -182,7 +185,7 @@ const Index = () => {
               onClick={() => navigate("/auth")}
               variant="ghost"
               size="sm"
-              className="rounded-xl hidden sm:flex text-muted-foreground hover:text-foreground"
+              className={cn("rounded-xl hidden sm:flex", navOpacity > 0.5 ? "text-muted-foreground hover:text-foreground" : "text-white/70 hover:text-white hover:bg-white/10")}
             >
               تسجيل الدخول
             </Button>
@@ -200,49 +203,44 @@ const Index = () => {
 
       {/* ═══ HERO ═══ */}
       <section className="relative min-h-[100vh] flex items-center overflow-hidden" aria-labelledby="hero-heading">
-        {/* Background Image with Parallax */}
-        <div className="absolute inset-0" style={{ transform: `translateY(${scrollY * 0.3}px)` }}>
-          <img
-            src={heroImage}
-            alt="أطفال يمارسون الرياضة بسعادة"
-            className="w-full h-[120%] object-cover"
-            width={1920}
-            height={1080}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-          />
-        </div>
+        {/* Deep gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(160,35%,8%)] via-[hsl(160,25%,12%)] to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(160,40%,6%,0.5)] via-transparent to-[hsl(215,50%,10%,0.3)]" />
 
-        {/* Gradient Overlay — Multi-layer */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-background/20" />
+        {/* 3D Scene */}
+        <Suspense fallback={null}>
+          <HeroScene3D />
+        </Suspense>
 
-        {/* Floating Orbs */}
-        <div className="orb orb-primary w-72 h-72 top-20 right-10 animate-float-slow" />
-        <div className="orb orb-accent w-56 h-56 bottom-40 left-20 animate-float-delayed" />
-        <div className="orb orb-secondary w-40 h-40 top-1/3 left-1/4 animate-float" style={{ animationDelay: '3s' }} />
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03] z-[2]" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--primary)) 1px, transparent 0)`,
+          backgroundSize: '40px 40px',
+        }} />
 
-        <div className="relative container mx-auto px-6 pt-32 pb-20 text-center">
+        {/* Bottom gradient fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent z-[3]" />
+
+        <div className="relative container mx-auto px-6 pt-32 pb-20 text-center z-[4]">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-card/70 backdrop-blur-md text-primary text-sm font-semibold mb-8 animate-fade-in border border-primary/15 shadow-[var(--shadow-sm)]">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse-soft" />
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.08] backdrop-blur-md text-emerald-300 text-sm font-semibold mb-8 animate-fade-in border border-white/10 shadow-[0_0_30px_rgba(46,158,110,0.15)]">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-soft" />
             <span>اكتشف موهبة طفلك الرياضية — مجاناً</span>
           </div>
 
           {/* Heading */}
-          <h1 id="hero-heading" className="text-5xl sm:text-6xl md:text-[5rem] font-black text-foreground mb-6 animate-slide-up leading-[1.1] text-balance tracking-tight">
+          <h1 id="hero-heading" className="text-5xl sm:text-6xl md:text-[5rem] font-black text-white mb-6 animate-slide-up leading-[1.1] text-balance tracking-tight drop-shadow-[0_2px_30px_rgba(0,0,0,0.3)]">
             اكتشف الرياضة
             <br />
-            <span className="text-gradient-hero">
+            <span className="bg-gradient-to-l from-emerald-300 via-emerald-400 to-teal-300 bg-clip-text text-transparent">
               المناسبة لطفلك
             </span>
           </h1>
 
           {/* Accent line */}
-          <div className="line-accent mx-auto mb-6 animate-scale-in" style={{ animationDelay: '300ms' }} />
+          <div className="w-16 h-1 rounded-full bg-gradient-to-r from-emerald-400 to-teal-300 mx-auto mb-6 animate-scale-in" style={{ animationDelay: '300ms' }} />
 
-          <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-xl mx-auto animate-slide-up leading-relaxed text-balance" style={{ animationDelay: '150ms' }}>
+          <p className="text-lg md:text-xl text-white/60 mb-12 max-w-xl mx-auto animate-slide-up leading-relaxed text-balance" style={{ animationDelay: '150ms' }}>
             نحلل 8 قدرات بدنية وذهنية لطفلك ونقترح الرياضة الأنسب من 11 رياضة مع متابعة تطوره خطوة بخطوة
           </p>
 
@@ -251,7 +249,7 @@ const Index = () => {
             <Button
               onClick={() => navigate("/auth")}
               size="xl"
-              className="gradient-primary text-primary-foreground text-lg px-12 shadow-[var(--shadow-lg)] hover:shadow-[var(--shadow-glow)] transition-all hover:scale-[1.03] rounded-2xl press-effect shine-effect group"
+              className="gradient-primary text-primary-foreground text-lg px-12 shadow-[0_0_40px_rgba(46,158,110,0.3)] hover:shadow-[0_0_60px_rgba(46,158,110,0.5)] transition-all hover:scale-[1.03] rounded-2xl press-effect shine-effect group"
             >
               ابدأ الآن مجاناً
               <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" aria-hidden="true" />
@@ -262,9 +260,9 @@ const Index = () => {
               }}
               variant="outline"
               size="xl"
-              className="text-lg rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/80 press-effect"
+              className="text-lg rounded-2xl border-white/15 bg-white/[0.06] backdrop-blur-sm hover:bg-white/10 text-white/80 hover:text-white press-effect"
             >
-              <Play className="w-4 h-4 ml-2 text-primary" />
+              <Play className="w-4 h-4 ml-2 text-emerald-400" />
               تعرّف على المزيد
             </Button>
           </div>
@@ -272,29 +270,29 @@ const Index = () => {
           {/* Stats — Glass Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 mt-20 animate-fade-in max-w-3xl mx-auto" style={{ animationDelay: '400ms' }} role="list" aria-label="إحصائيات">
             {stats.map((stat, i) => (
-              <div key={stat.label} className="stat-card text-center backdrop-blur-sm" role="listitem" style={{ animationDelay: `${400 + i * 80}ms` }}>
-                <div className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center mx-auto mb-2">
-                  <stat.icon className="w-5 h-5 text-primary" />
+              <div key={stat.label} className="text-center backdrop-blur-md bg-white/[0.06] border border-white/10 rounded-2xl p-5 hover:bg-white/[0.1] transition-all" role="listitem" style={{ animationDelay: `${400 + i * 80}ms` }}>
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mx-auto mb-2">
+                  <stat.icon className="w-5 h-5 text-emerald-400" />
                 </div>
-                <p className="text-3xl md:text-4xl font-black text-foreground leading-none">
+                <p className="text-3xl md:text-4xl font-black text-white leading-none">
                   <CountUp target={stat.value} />
                 </p>
-                <p className="text-xs text-muted-foreground font-medium mt-1.5">{stat.label}</p>
+                <p className="text-xs text-white/50 font-medium mt-1.5">{stat.label}</p>
               </div>
             ))}
           </div>
 
           {/* Trust badges */}
-          <div className="flex items-center justify-center gap-6 mt-10 text-xs text-muted-foreground animate-fade-in" style={{ animationDelay: '600ms' }}>
-            <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-primary/70" /> بيانات مشفرة</span>
-            <span className="hidden sm:flex items-center gap-1.5"><Clock className="w-4 h-4 text-primary/70" /> 8 دقائق فقط</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-primary/70" /> مجاني 100%</span>
+          <div className="flex items-center justify-center gap-6 mt-10 text-xs text-white/40 animate-fade-in" style={{ animationDelay: '600ms' }}>
+            <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-emerald-400/50" /> بيانات مشفرة</span>
+            <span className="hidden sm:flex items-center gap-1.5"><Clock className="w-4 h-4 text-emerald-400/50" /> 8 دقائق فقط</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-400/50" /> مجاني 100%</span>
           </div>
 
           {/* Scroll indicator */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
-            <div className="w-8 h-12 rounded-full border-2 border-muted-foreground/20 flex items-start justify-center p-2">
-              <div className="w-1 h-2.5 rounded-full bg-muted-foreground/40 animate-pulse" />
+            <div className="w-8 h-12 rounded-full border-2 border-white/15 flex items-start justify-center p-2">
+              <div className="w-1 h-2.5 rounded-full bg-white/30 animate-pulse" />
             </div>
           </div>
         </div>
