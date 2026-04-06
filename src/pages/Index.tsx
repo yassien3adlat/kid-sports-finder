@@ -377,8 +377,8 @@ const Index = () => {
       </section>
 
       {/* ═══ BENEFITS ═══ */}
-      <section className="container mx-auto px-6 py-24" aria-labelledby="benefits-heading">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24" aria-labelledby="benefits-heading">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 sm:gap-16 items-center">
           <AnimatedSection>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
               <Heart className="w-3.5 h-3.5" /> لماذا Helm؟
