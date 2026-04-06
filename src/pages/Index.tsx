@@ -526,8 +526,8 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
             <div>
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
-                  <Trophy className="w-5 h-5 text-primary-foreground" aria-hidden="true" />
+                <div className="w-10 h-10 rounded-xl overflow-hidden shadow-soft">
+                  <img src={helmLogo} alt="Helm" className="w-full h-full object-contain" loading="lazy" />
                 </div>
                 <span className="font-black text-foreground text-xl">Helm</span>
               </div>
