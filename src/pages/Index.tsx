@@ -344,7 +344,7 @@ const Index = () => {
         <div className="absolute inset-0 gradient-surface" />
         <div className="orb orb-accent w-64 h-64 top-10 left-10 opacity-[0.05]" />
 
-        <div className="relative container mx-auto px-6">
+         <div className="relative container mx-auto px-4 sm:px-6">
           <AnimatedSection className="text-center mb-16">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
               <Zap className="w-3.5 h-3.5" /> كيف يعمل
