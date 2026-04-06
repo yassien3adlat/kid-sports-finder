@@ -345,11 +345,11 @@ const Index = () => {
         <div className="orb orb-accent w-64 h-64 top-10 left-10 opacity-[0.05]" />
 
          <div className="relative container mx-auto px-4 sm:px-6">
-          <AnimatedSection className="text-center mb-16">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
+          <AnimatedSection className="text-center mb-10 sm:mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-4 sm:mb-5 border border-primary/10">
               <Zap className="w-3.5 h-3.5" /> كيف يعمل
             </span>
-            <h2 id="steps-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
+            <h2 id="steps-heading" className="text-2xl sm:text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
               4 خطوات بسيطة لاكتشاف موهبة طفلك
             </h2>
           </AnimatedSection>
