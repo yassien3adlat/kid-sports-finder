@@ -310,7 +310,7 @@ const Index = () => {
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
             <Target className="w-3.5 h-3.5" /> المميزات
           </span>
-          <h2 id="features-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground mb-4 text-balance leading-tight">
+          <h2 id="features-heading" className="text-2xl sm:text-3xl md:text-[2.75rem] font-black text-foreground mb-4 text-balance leading-tight">
             كل ما يحتاجه طفلك في مكان واحد
           </h2>
           <div className="line-accent mx-auto mb-4" />
