@@ -13,12 +13,16 @@ export function PageHeader({ title, backTo = "/dashboard", children, compact }: 
   const navigate = useNavigate();
 
   return (
-    <header className={`gradient-hero text-primary-foreground ${compact ? "p-4" : "p-6"}`}>
-      <div className="container mx-auto flex items-center justify-between gap-4">
+    <header className={`relative overflow-hidden gradient-hero text-primary-foreground ${compact ? "p-4" : "px-5 pt-6 pb-5"}`}>
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-32 h-32 rounded-full bg-primary-foreground/5 -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-24 h-24 rounded-full bg-primary-foreground/3" />
+      
+      <div className="container mx-auto flex items-center justify-between gap-4 relative">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(backTo)}
-            className="p-1.5 rounded-lg hover:bg-primary-foreground/10 transition-colors"
+            className="p-2 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors backdrop-blur-sm border border-primary-foreground/5"
             aria-label="الرجوع"
           >
             <ArrowRight className="w-5 h-5" />

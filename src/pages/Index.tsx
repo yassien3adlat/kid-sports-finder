@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Trophy, Users, Target, TrendingUp, MapPin, BookOpen, ChevronLeft,
   Sparkles, Shield, Star, Quote, CheckCircle2, ArrowLeft, Zap, Heart,
-  ChevronDown, MessageSquare, Award, Rocket, Clock,
+  ChevronDown, MessageSquare, Award, Rocket, Clock, Play, ArrowDown,
 } from "lucide-react";
 import heroImage from "@/assets/hero-kids-sports.jpg";
 import { cn } from "@/lib/utils";
@@ -62,16 +62,16 @@ const faqs = [
 ];
 
 function AnimatedSection({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.15 });
+  const [ref, isInView] = useInView<HTMLDivElement>({ threshold: 0.12 });
   return (
     <div
       ref={ref}
       className={cn(
-        "transition-all duration-700 ease-out",
-        isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
+        "transition-all ease-out",
+        isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
         className
       )}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ transitionDelay: `${delay}ms`, transitionDuration: '700ms' }}
     >
       {children}
     </div>
@@ -105,20 +105,32 @@ function CountUp({ target, suffix = "" }: { target: string; suffix?: string }) {
 
 function FAQItem({ faq, isOpen, toggle }: { faq: { q: string; a: string }; isOpen: boolean; toggle: () => void }) {
   return (
-    <div className="border border-border/50 rounded-xl overflow-hidden transition-all">
+    <div className={cn(
+      "rounded-2xl overflow-hidden transition-all border",
+      isOpen ? "border-primary/20 bg-card shadow-[var(--shadow-md)]" : "border-border/40 bg-card/60 hover:bg-card hover:border-border/60"
+    )}>
       <button
         onClick={toggle}
-        className="w-full flex items-center justify-between p-4 text-right hover:bg-muted/30 transition-colors"
+        className="w-full flex items-center justify-between p-5 text-right transition-colors group"
         aria-expanded={isOpen}
       >
-        <span className="font-bold text-foreground text-sm">{faq.q}</span>
-        <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform flex-shrink-0 mr-3", isOpen && "rotate-180")} />
+        <span className="font-bold text-foreground text-sm leading-relaxed">{faq.q}</span>
+        <div className={cn(
+          "w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mr-3 transition-all",
+          isOpen ? "bg-primary text-primary-foreground rotate-180" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+        )}>
+          <ChevronDown className="w-4 h-4" />
+        </div>
       </button>
-      {isOpen && (
-        <div className="px-4 pb-4 animate-fade-in">
+      <div className={cn(
+        "overflow-hidden transition-all",
+        isOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+      )} style={{ transitionDuration: '300ms' }}>
+        <div className="px-5 pb-5">
+          <div className="h-px bg-border/50 mb-4" />
           <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -127,144 +139,197 @@ const Index = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     if (!loading && user) navigate("/dashboard", { replace: true });
   }, [user, loading]);
 
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navOpacity = Math.min(scrollY / 100, 1);
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Navbar */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 safe-top" role="navigation" aria-label="التنقل الرئيسي">
+      {/* Navbar — Glassmorphism */}
+      <nav
+        className="fixed top-0 inset-x-0 z-50 safe-top transition-all duration-300"
+        role="navigation"
+        aria-label="التنقل الرئيسي"
+        style={{
+          background: `hsl(var(--card) / ${0.6 + navOpacity * 0.3})`,
+          backdropFilter: `blur(${8 + navOpacity * 16}px) saturate(${1 + navOpacity * 0.8})`,
+          borderBottom: `1px solid hsl(var(--border) / ${navOpacity * 0.5})`,
+          boxShadow: navOpacity > 0.5 ? 'var(--shadow-sm)' : 'none',
+        }}
+      >
         <div className="container mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
               <Trophy className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-black text-foreground">Helm</span>
+            <div className="flex flex-col">
+              <span className="text-xl font-black text-foreground leading-none">Helm</span>
+              <span className="text-[9px] text-muted-foreground leading-none mt-0.5 hidden sm:block">اكتشف رياضة طفلك</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Button
               onClick={() => navigate("/auth")}
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="rounded-xl border-border/50 hidden sm:flex"
+              className="rounded-xl hidden sm:flex text-muted-foreground hover:text-foreground"
             >
               تسجيل الدخول
             </Button>
             <Button
               onClick={() => navigate("/auth")}
               size="sm"
-              className="gradient-primary text-primary-foreground rounded-xl press-effect shadow-soft"
+              className="gradient-primary text-primary-foreground rounded-xl press-effect shadow-soft shine-effect"
             >
+              <Sparkles className="w-3.5 h-3.5 ml-1" />
               ابدأ الآن
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative min-h-[92vh] flex items-center" aria-labelledby="hero-heading">
-        <div className="absolute inset-0">
+      {/* ═══ HERO ═══ */}
+      <section className="relative min-h-[100vh] flex items-center overflow-hidden" aria-labelledby="hero-heading">
+        {/* Background Image with Parallax */}
+        <div className="absolute inset-0" style={{ transform: `translateY(${scrollY * 0.3}px)` }}>
           <img
             src={heroImage}
             alt="أطفال يمارسون الرياضة بسعادة"
-            className="w-full h-full object-cover"
+            className="w-full h-[120%] object-cover"
             width={1920}
-            height={1024}
+            height={1080}
             loading="eager"
             fetchPriority="high"
             decoding="async"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-background/40" />
         </div>
 
-        <div className="relative container mx-auto px-6 pt-28 pb-16 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6 animate-fade-in backdrop-blur-sm border border-primary/20">
-            <Sparkles className="w-4 h-4" aria-hidden="true" />
+        {/* Gradient Overlay — Multi-layer */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-background/20" />
+
+        {/* Floating Orbs */}
+        <div className="orb orb-primary w-72 h-72 top-20 right-10 animate-float-slow" />
+        <div className="orb orb-accent w-56 h-56 bottom-40 left-20 animate-float-delayed" />
+        <div className="orb orb-secondary w-40 h-40 top-1/3 left-1/4 animate-float" style={{ animationDelay: '3s' }} />
+
+        <div className="relative container mx-auto px-6 pt-32 pb-20 text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-card/70 backdrop-blur-md text-primary text-sm font-semibold mb-8 animate-fade-in border border-primary/15 shadow-[var(--shadow-sm)]">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse-soft" />
             <span>اكتشف موهبة طفلك الرياضية — مجاناً</span>
           </div>
 
-          <h1 id="hero-heading" className="text-4xl sm:text-5xl md:text-7xl font-black text-foreground mb-5 animate-slide-up leading-tight text-balance">
+          {/* Heading */}
+          <h1 id="hero-heading" className="text-5xl sm:text-6xl md:text-[5rem] font-black text-foreground mb-6 animate-slide-up leading-[1.1] text-balance tracking-tight">
             اكتشف الرياضة
             <br />
-            <span className="bg-gradient-to-l from-primary to-accent bg-clip-text text-transparent">
+            <span className="text-gradient-hero">
               المناسبة لطفلك
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto animate-slide-up leading-relaxed text-balance">
+          {/* Accent line */}
+          <div className="line-accent mx-auto mb-6 animate-scale-in" style={{ animationDelay: '300ms' }} />
+
+          <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-xl mx-auto animate-slide-up leading-relaxed text-balance" style={{ animationDelay: '150ms' }}>
             نحلل 8 قدرات بدنية وذهنية لطفلك ونقترح الرياضة الأنسب من 11 رياضة مع متابعة تطوره خطوة بخطوة
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center animate-slide-up">
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: '250ms' }}>
             <Button
               onClick={() => navigate("/auth")}
-              size="lg"
-              className="gradient-primary text-primary-foreground text-lg px-10 py-7 shadow-soft hover:shadow-glow transition-all hover:scale-[1.02] rounded-2xl press-effect"
+              size="xl"
+              className="gradient-primary text-primary-foreground text-lg px-12 shadow-[var(--shadow-lg)] hover:shadow-[var(--shadow-glow)] transition-all hover:scale-[1.03] rounded-2xl press-effect shine-effect group"
             >
               ابدأ الآن مجاناً
-              <ChevronLeft className="w-5 h-5 mr-1" aria-hidden="true" />
+              <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" aria-hidden="true" />
             </Button>
             <Button
               onClick={() => {
                 document.getElementById("features-heading")?.scrollIntoView({ behavior: "smooth" });
               }}
               variant="outline"
-              size="lg"
-              className="text-lg px-8 py-7 rounded-2xl border-border/50 hover:bg-muted/50 press-effect"
+              size="xl"
+              className="text-lg rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card/80 press-effect"
             >
+              <Play className="w-4 h-4 ml-2 text-primary" />
               تعرّف على المزيد
             </Button>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 mt-16 animate-fade-in max-w-3xl mx-auto" role="list" aria-label="إحصائيات">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center bg-card/60 backdrop-blur-sm rounded-2xl p-4 border border-border/30" role="listitem">
-                <div className="flex items-center justify-center gap-1.5 mb-1">
+          {/* Stats — Glass Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 mt-20 animate-fade-in max-w-3xl mx-auto" style={{ animationDelay: '400ms' }} role="list" aria-label="إحصائيات">
+            {stats.map((stat, i) => (
+              <div key={stat.label} className="stat-card text-center backdrop-blur-sm" role="listitem" style={{ animationDelay: `${400 + i * 80}ms` }}>
+                <div className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center mx-auto mb-2">
                   <stat.icon className="w-5 h-5 text-primary" />
-                  <p className="text-3xl md:text-4xl font-black text-foreground">
-                    <CountUp target={stat.value} />
-                  </p>
                 </div>
-                <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
+                <p className="text-3xl md:text-4xl font-black text-foreground leading-none">
+                  <CountUp target={stat.value} />
+                </p>
+                <p className="text-xs text-muted-foreground font-medium mt-1.5">{stat.label}</p>
               </div>
             ))}
           </div>
 
           {/* Trust badges */}
-          <div className="flex items-center justify-center gap-4 mt-8 text-xs text-muted-foreground animate-fade-in">
-            <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-primary" /> بيانات مشفرة</span>
-            <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-primary" /> 8 دقائق فقط</span>
-            <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-primary" /> مجاني 100%</span>
+          <div className="flex items-center justify-center gap-6 mt-10 text-xs text-muted-foreground animate-fade-in" style={{ animationDelay: '600ms' }}>
+            <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-primary/70" /> بيانات مشفرة</span>
+            <span className="hidden sm:flex items-center gap-1.5"><Clock className="w-4 h-4 text-primary/70" /> 8 دقائق فقط</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-primary/70" /> مجاني 100%</span>
+          </div>
+
+          {/* Scroll indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
+            <div className="w-8 h-12 rounded-full border-2 border-muted-foreground/20 flex items-start justify-center p-2">
+              <div className="w-1 h-2.5 rounded-full bg-muted-foreground/40 animate-pulse" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="container mx-auto px-6 py-20" aria-labelledby="features-heading">
-        <AnimatedSection className="text-center mb-14">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
+      {/* ═══ FEATURES ═══ */}
+      <section className="relative container mx-auto px-6 py-24" aria-labelledby="features-heading">
+        {/* Background Orb */}
+        <div className="orb orb-primary w-96 h-96 -top-20 right-0 opacity-[0.06]" />
+
+        <AnimatedSection className="text-center mb-16">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
             <Target className="w-3.5 h-3.5" /> المميزات
           </span>
-          <h2 id="features-heading" className="text-3xl md:text-4xl font-black text-foreground mb-3 text-balance">
+          <h2 id="features-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground mb-4 text-balance leading-tight">
             كل ما يحتاجه طفلك في مكان واحد
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">
+          <div className="line-accent mx-auto mb-4" />
+          <p className="text-muted-foreground max-w-lg mx-auto text-base">
             نظام متكامل لاكتشاف المواهب الرياضية وتطويرها بطريقة علمية ومدروسة
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, i) => (
             <AnimatedSection key={i} delay={i * 100}>
-              <Card className="shadow-card hover:shadow-elevated transition-all duration-300 hover:-translate-y-1.5 border-border/50 group overflow-hidden h-full">
-                <CardContent className="p-6">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
+              <Card className="card-premium border-border/30 group h-full bg-card/80 backdrop-blur-sm">
+                <CardContent className="p-7">
+                  <div className={cn(
+                    "feature-icon w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm",
+                    feature.color
+                  )}>
                     <feature.icon className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">{feature.title}</h3>
+                  <h3 className="text-lg font-bold text-foreground mb-2.5">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                 </CardContent>
               </Card>
@@ -273,109 +338,126 @@ const Index = () => {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="bg-muted/50 py-20" aria-labelledby="steps-heading">
-        <div className="container mx-auto px-6">
-          <AnimatedSection className="text-center mb-14">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
+      {/* ═══ HOW IT WORKS ═══ */}
+      <section className="relative overflow-hidden py-24" aria-labelledby="steps-heading">
+        <div className="absolute inset-0 gradient-surface" />
+        <div className="orb orb-accent w-64 h-64 top-10 left-10 opacity-[0.05]" />
+
+        <div className="relative container mx-auto px-6">
+          <AnimatedSection className="text-center mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
               <Zap className="w-3.5 h-3.5" /> كيف يعمل
             </span>
-            <h2 id="steps-heading" className="text-3xl font-black text-foreground">
+            <h2 id="steps-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
               4 خطوات بسيطة لاكتشاف موهبة طفلك
             </h2>
           </AnimatedSection>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 max-w-5xl mx-auto">
             {steps.map((item, i) => (
               <AnimatedSection key={i} delay={i * 150} className="text-center group">
-                <div className="relative">
-                  <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 text-primary-foreground font-black text-2xl group-hover:scale-110 transition-transform shadow-soft">
+                <div className="relative mb-5">
+                  {/* Step number */}
+                  <div className="w-20 h-20 rounded-3xl gradient-primary flex items-center justify-center mx-auto text-primary-foreground font-black text-3xl group-hover:scale-110 transition-all duration-300 shadow-[var(--shadow-md)] group-hover:shadow-[var(--shadow-glow)] relative overflow-hidden shine-effect">
                     {item.step}
                   </div>
+                  {/* Connector line */}
                   {i < steps.length - 1 && (
-                    <div className="hidden md:block absolute top-8 -left-3 w-6 h-[2px] bg-border" />
+                    <div className="hidden md:block absolute top-10 -left-4 lg:-left-6 w-8 lg:w-12 h-[2px]">
+                      <div className="w-full h-full bg-gradient-to-l from-primary/30 to-transparent rounded-full" />
+                    </div>
                   )}
                 </div>
-                <h3 className="font-bold text-foreground mb-1.5 text-sm sm:text-base">{item.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-foreground mb-2 text-base">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-[200px] mx-auto">{item.desc}</p>
               </AnimatedSection>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Benefits checklist */}
-      <section className="container mx-auto px-6 py-20" aria-labelledby="benefits-heading">
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      {/* ═══ BENEFITS ═══ */}
+      <section className="container mx-auto px-6 py-24" aria-labelledby="benefits-heading">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <AnimatedSection>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
               <Heart className="w-3.5 h-3.5" /> لماذا Helm؟
             </span>
-            <h2 id="benefits-heading" className="text-3xl font-black text-foreground mb-6 text-balance">
+            <h2 id="benefits-heading" className="text-3xl md:text-[2.5rem] font-black text-foreground mb-8 text-balance leading-tight">
               كل ما تحتاجه لدعم رحلة طفلك الرياضية
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {benefits.map((benefit, i) => (
-                <div key={i} className="flex items-start gap-3 group">
-                  <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                  <p className="text-foreground font-medium text-sm">{benefit}</p>
+                <div key={i} className="flex items-start gap-3.5 group hover:translate-x-[-4px] transition-transform duration-200">
+                  <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-primary/20 transition-colors">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <p className="text-foreground font-medium text-sm leading-relaxed">{benefit}</p>
                 </div>
               ))}
             </div>
           </AnimatedSection>
 
           <AnimatedSection delay={200}>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               {[
-                { val: "27", label: "سؤال ذكي", sub: "في الاختبار", color: "gradient-primary" },
-                { val: "8", label: "قدرات", sub: "تحليلية", color: "gradient-secondary" },
-                { val: "11", label: "رياضة", sub: "مقترحة", color: "gradient-hero" },
-                { val: "100%", label: "مجاني", sub: "بالكامل", color: "gradient-primary" },
+                { val: "27", label: "سؤال ذكي", sub: "في الاختبار", icon: Target },
+                { val: "8", label: "قدرات", sub: "تحليلية", icon: Award },
+                { val: "11", label: "رياضة", sub: "مقترحة", icon: Trophy },
+                { val: "100%", label: "مجاني", sub: "بالكامل", icon: Heart },
               ].map((item, i) => (
-                <Card key={i} className="shadow-card border-border/50 overflow-hidden hover:shadow-elevated transition-all">
-                  <CardContent className="p-5 text-center">
-                    <p className="text-3xl font-black text-primary mb-1">{item.val}</p>
-                    <p className="text-sm font-bold text-foreground">{item.label}</p>
-                    <p className="text-xs text-muted-foreground">{item.sub}</p>
-                  </CardContent>
-                </Card>
+                <div key={i} className="stat-card text-center group">
+                  <div className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/15 transition-colors">
+                    <item.icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <p className="text-3xl font-black text-foreground leading-none mb-1">{item.val}</p>
+                  <p className="text-sm font-bold text-foreground">{item.label}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{item.sub}</p>
+                </div>
               ))}
             </div>
           </AnimatedSection>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="bg-muted/50 py-20" aria-labelledby="testimonials-heading">
-        <div className="container mx-auto px-6">
-          <AnimatedSection className="text-center mb-12">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
+      {/* ═══ TESTIMONIALS ═══ */}
+      <section className="relative overflow-hidden py-24" aria-labelledby="testimonials-heading">
+        <div className="absolute inset-0 gradient-surface" />
+        <div className="orb orb-secondary w-80 h-80 bottom-0 right-0 opacity-[0.05]" />
+
+        <div className="relative container mx-auto px-6">
+          <AnimatedSection className="text-center mb-14">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
               <Star className="w-3.5 h-3.5" /> آراء المستخدمين
             </span>
-            <h2 id="testimonials-heading" className="text-3xl font-black text-foreground mb-2">
+            <h2 id="testimonials-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground mb-3 leading-tight">
               ماذا يقول أولياء الأمور؟
             </h2>
-            <p className="text-muted-foreground text-sm">أكثر من 500 عائلة استفادت من Helm</p>
+            <p className="text-muted-foreground text-base">أكثر من 500 عائلة استفادت من Helm</p>
           </AnimatedSection>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
             {testimonials.map((t, i) => (
               <AnimatedSection key={i} delay={i * 100}>
-                <Card className="shadow-card border-border/50 h-full hover:shadow-elevated transition-all hover:-translate-y-1">
-                  <CardContent className="p-5">
-                    <div className="flex gap-0.5 mb-3">
+                <Card className="card-premium border-border/30 h-full bg-card/80 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    {/* Stars */}
+                    <div className="flex gap-0.5 mb-4">
                       {Array.from({ length: 5 }).map((_, j) => (
-                        <Star key={j} className={cn("w-3.5 h-3.5", j < t.rating ? "text-amber-500 fill-amber-500" : "text-muted")} />
+                        <Star key={j} className={cn("w-4 h-4", j < t.rating ? "text-amber-500 fill-amber-500" : "text-muted")} />
                       ))}
                     </div>
-                    <Quote className="w-6 h-6 text-primary/20 mb-2" />
-                    <p className="text-foreground text-sm leading-relaxed mb-4">{t.text}</p>
-                    <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                    {/* Quote icon */}
+                    <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center mb-3">
+                      <Quote className="w-4 h-4 text-primary/50" />
+                    </div>
+                    <p className="text-foreground text-sm leading-[1.7] mb-5">{t.text}</p>
+                    <div className="flex items-center justify-between pt-4 border-t border-border/40">
                       <div>
                         <p className="font-bold text-foreground text-sm">{t.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{t.location} • {t.sport}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">{t.location}</p>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-semibold">{t.sport}</span>
+                      <span className="px-3 py-1 rounded-full bg-primary/8 text-primary text-[11px] font-bold border border-primary/10">{t.sport}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -385,13 +467,13 @@ const Index = () => {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="container mx-auto px-6 py-20" aria-labelledby="faq-heading">
-        <AnimatedSection className="text-center mb-12">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
+      {/* ═══ FAQ ═══ */}
+      <section className="container mx-auto px-6 py-24" aria-labelledby="faq-heading">
+        <AnimatedSection className="text-center mb-14">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
             <MessageSquare className="w-3.5 h-3.5" /> أسئلة شائعة
           </span>
-          <h2 id="faq-heading" className="text-3xl font-black text-foreground">
+          <h2 id="faq-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
             الأسئلة الأكثر شيوعاً
           </h2>
         </AnimatedSection>
@@ -405,74 +487,81 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="gradient-hero py-20" aria-labelledby="cta-heading">
-        <AnimatedSection className="container mx-auto px-6 text-center">
-          <Shield className="w-14 h-14 text-primary-foreground/80 mx-auto mb-5" aria-hidden="true" />
-          <h2 id="cta-heading" className="text-3xl md:text-4xl font-black text-primary-foreground mb-4 text-balance">
+      {/* ═══ CTA ═══ */}
+      <section className="relative overflow-hidden py-28" aria-labelledby="cta-heading">
+        <div className="absolute inset-0 gradient-hero" />
+        {/* Decorative circles */}
+        <div className="absolute top-10 right-10 w-64 h-64 rounded-full border border-primary-foreground/5" />
+        <div className="absolute bottom-10 left-10 w-48 h-48 rounded-full border border-primary-foreground/5" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-primary-foreground/[0.03]" />
+
+        <AnimatedSection className="relative container mx-auto px-6 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center mx-auto mb-6 shadow-[var(--shadow-lg)]">
+            <Shield className="w-8 h-8 text-primary-foreground" aria-hidden="true" />
+          </div>
+          <h2 id="cta-heading" className="text-3xl md:text-5xl font-black text-primary-foreground mb-5 text-balance leading-tight">
             جاهز تكتشف رياضة طفلك؟
           </h2>
-          <p className="text-primary-foreground/80 mb-6 text-lg max-w-md mx-auto">
+          <p className="text-primary-foreground/75 mb-8 text-lg max-w-md mx-auto leading-relaxed">
             سجّل الآن مجاناً وابدأ رحلة اكتشاف موهبة طفلك الرياضية
           </p>
-          <div className="flex items-center justify-center gap-6 text-primary-foreground/60 text-xs mb-10">
-            <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> مجاني بالكامل</span>
-            <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> بدون بطاقة ائتمان</span>
-            <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> 8 دقائق فقط</span>
+          <div className="flex items-center justify-center gap-6 text-primary-foreground/50 text-xs mb-12">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> مجاني بالكامل</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> بدون بطاقة ائتمان</span>
+            <span className="hidden sm:flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> 8 دقائق فقط</span>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button
-              onClick={() => navigate("/auth")}
-              size="lg"
-              className="bg-background text-primary hover:bg-background/90 text-lg px-10 py-7 shadow-elevated hover:scale-[1.02] transition-all rounded-2xl font-bold press-effect"
-            >
-              ابدأ مجاناً الآن
-              <ArrowLeft className="w-5 h-5 mr-2" />
-            </Button>
-          </div>
+          <Button
+            onClick={() => navigate("/auth")}
+            size="xl"
+            className="bg-card text-primary hover:bg-card/95 text-lg px-14 shadow-[var(--shadow-2xl)] hover:scale-[1.03] transition-all rounded-2xl font-bold press-effect shine-effect group"
+          >
+            ابدأ مجاناً الآن
+            <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+          </Button>
         </AnimatedSection>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-card border-t border-border py-12" role="contentinfo">
+      {/* ═══ FOOTER ═══ */}
+      <footer className="bg-card border-t border-border/50 py-14" role="contentinfo">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
-                  <Trophy className="w-4 h-4 text-primary-foreground" aria-hidden="true" />
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
+                  <Trophy className="w-5 h-5 text-primary-foreground" aria-hidden="true" />
                 </div>
-                <span className="font-black text-foreground text-lg">Helm</span>
+                <span className="font-black text-foreground text-xl">Helm</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
                 تطبيق ذكي لاكتشاف المواهب الرياضية للأطفال ومتابعة تطورهم بطريقة علمية ومدروسة
               </p>
             </div>
             <div>
-              <h3 className="font-bold text-foreground mb-3 text-sm">الخدمات</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>اختبار القدرات الرياضية (27 سؤال)</li>
-                <li>متابعة التقدم الأسبوعي</li>
-                <li>دليل مراكز التدريب (50+)</li>
-                <li>نصائح وإرشادات متخصصة</li>
+              <h3 className="font-bold text-foreground mb-4 text-sm">الخدمات</h3>
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
+                <li className="hover:text-foreground transition-colors cursor-default">اختبار القدرات الرياضية (27 سؤال)</li>
+                <li className="hover:text-foreground transition-colors cursor-default">متابعة التقدم الأسبوعي</li>
+                <li className="hover:text-foreground transition-colors cursor-default">دليل مراكز التدريب (50+)</li>
+                <li className="hover:text-foreground transition-colors cursor-default">نصائح وإرشادات متخصصة</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-foreground mb-3 text-sm">التطبيق</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>مجاني بالكامل — بدون إعلانات</li>
-                <li>يعمل على جميع الأجهزة</li>
-                <li>متاح كتطبيق PWA</li>
-                <li>آمن وخاص — تشفير SSL/TLS</li>
+              <h3 className="font-bold text-foreground mb-4 text-sm">التطبيق</h3>
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
+                <li className="hover:text-foreground transition-colors cursor-default">مجاني بالكامل — بدون إعلانات</li>
+                <li className="hover:text-foreground transition-colors cursor-default">يعمل على جميع الأجهزة</li>
+                <li className="hover:text-foreground transition-colors cursor-default">متاح كتطبيق PWA</li>
+                <li className="hover:text-foreground transition-colors cursor-default">آمن وخاص — تشفير SSL/TLS</li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="section-divider" />
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} Helm. جميع الحقوق محفوظة
             </p>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> بيانات مشفرة</span>
+            <div className="flex items-center gap-5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-primary/50" /> بيانات مشفرة</span>
               <span>🇸🇦 صنع بحب</span>
             </div>
           </div>
