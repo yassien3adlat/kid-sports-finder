@@ -173,8 +173,8 @@ const Index = () => {
       >
         <div className="container mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
-              <Trophy className="w-5 h-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-soft">
+              <img src={helmLogo} alt="Helm" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col">
               <span className={cn("text-xl font-black leading-none transition-colors", navOpacity > 0.5 ? "text-foreground" : "text-white")}>Helm</span>
