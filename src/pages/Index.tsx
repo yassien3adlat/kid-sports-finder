@@ -495,25 +495,25 @@ const Index = () => {
         <div className="absolute bottom-10 left-10 w-48 h-48 rounded-full border border-primary-foreground/5" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-primary-foreground/[0.03]" />
 
-        <AnimatedSection className="relative container mx-auto px-6 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center mx-auto mb-6 shadow-[var(--shadow-lg)]">
-            <Shield className="w-8 h-8 text-primary-foreground" aria-hidden="true" />
+        <AnimatedSection className="relative container mx-auto px-4 sm:px-6 text-center">
+          <div className="w-14 sm:w-16 h-14 sm:h-16 rounded-2xl bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 sm:mb-6 shadow-[var(--shadow-lg)]">
+            <Shield className="w-7 sm:w-8 h-7 sm:h-8 text-primary-foreground" aria-hidden="true" />
           </div>
-          <h2 id="cta-heading" className="text-3xl md:text-5xl font-black text-primary-foreground mb-5 text-balance leading-tight">
+          <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-5xl font-black text-primary-foreground mb-4 sm:mb-5 text-balance leading-tight">
             جاهز تكتشف رياضة طفلك؟
           </h2>
-          <p className="text-primary-foreground/75 mb-8 text-lg max-w-md mx-auto leading-relaxed">
+          <p className="text-primary-foreground/75 mb-6 sm:mb-8 text-sm sm:text-lg max-w-md mx-auto leading-relaxed">
             سجّل الآن مجاناً وابدأ رحلة اكتشاف موهبة طفلك الرياضية
           </p>
-          <div className="flex items-center justify-center gap-6 text-primary-foreground/50 text-xs mb-12">
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> مجاني بالكامل</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> بدون بطاقة ائتمان</span>
-            <span className="hidden sm:flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> 8 دقائق فقط</span>
+          <div className="flex items-center justify-center gap-4 sm:gap-6 text-primary-foreground/50 text-[10px] sm:text-xs mb-8 sm:mb-12 flex-wrap">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> مجاني بالكامل</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> بدون بطاقة ائتمان</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> 8 دقائق فقط</span>
           </div>
           <Button
             onClick={() => navigate("/auth")}
             size="xl"
-            className="bg-card text-primary hover:bg-card/95 text-lg px-14 shadow-[var(--shadow-2xl)] hover:scale-[1.03] transition-all rounded-2xl font-bold press-effect shine-effect group"
+            className="bg-card text-primary hover:bg-card/95 text-base sm:text-lg px-10 sm:px-14 shadow-[var(--shadow-2xl)] hover:scale-[1.03] transition-all rounded-2xl font-bold press-effect shine-effect group"
           >
             ابدأ مجاناً الآن
             <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
