@@ -368,8 +368,8 @@ const Index = () => {
                     </div>
                   )}
                 </div>
-                <h3 className="font-bold text-foreground mb-2 text-base">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed max-w-[200px] mx-auto">{item.desc}</p>
+                <h3 className="font-bold text-foreground mb-1.5 sm:mb-2 text-sm sm:text-base">{item.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-[200px] mx-auto">{item.desc}</p>
               </AnimatedSection>
             ))}
           </div>
