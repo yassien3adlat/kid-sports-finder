@@ -306,7 +306,7 @@ const Index = () => {
         {/* Background Orb */}
         <div className="orb orb-primary w-96 h-96 -top-20 right-0 opacity-[0.06]" />
 
-        <AnimatedSection className="text-center mb-16">
+        <AnimatedSection className="text-center mb-10 sm:mb-16">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
             <Target className="w-3.5 h-3.5" /> المميزات
           </span>
