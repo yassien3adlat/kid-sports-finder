@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Trophy, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, XCircle, Shield, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import helmLogo from "@/assets/helm-logo.png";
 
 function PasswordStrength({ password }: { password: string }) {
   const analysis = useMemo(() => {
