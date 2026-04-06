@@ -10,6 +10,7 @@ import {
   ChevronDown, MessageSquare, Award, Rocket, Clock, Play, ArrowDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import helmLogo from "@/assets/helm-logo.png";
 
 const HeroScene3D = lazy(() => import("@/components/HeroScene3D"));
 
