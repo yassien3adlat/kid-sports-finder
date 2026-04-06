@@ -100,8 +100,8 @@ export function Layout({ children, hideNav }: LayoutProps) {
         >
           <div className="p-5 border-b border-border/50">
             <button onClick={() => handleNav("/dashboard")} className="flex items-center gap-2.5 press-effect group">
-              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft group-hover:shadow-glow transition-shadow">
-                <Trophy className="w-5 h-5 text-primary-foreground" aria-hidden="true" />
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-soft group-hover:shadow-glow transition-shadow">
+                <img src={helmLogo} alt="Helm" className="w-full h-full object-contain" />
               </div>
               <div className="text-right">
                 <span className="text-xl font-black text-foreground block leading-none">Helm</span>
