@@ -91,7 +91,7 @@ function TipsContent() {
             const isExpanded = expandedTip === globalIndex;
             const isBookmarked = bookmarks.has(globalIndex);
             return (
-              <Card key={globalIndex} className={cn("shadow-card border-border/50 transition-all cursor-pointer", isExpanded && "shadow-elevated border-primary/20")} onClick={() => setExpandedTip(isExpanded ? null : globalIndex)}>
+              <Card key={globalIndex} className={cn("card-premium border-border/30 transition-all cursor-pointer bg-card/80", isExpanded && "shadow-[var(--shadow-lg)] border-primary/20")} onClick={() => setExpandedTip(isExpanded ? null : globalIndex)}>
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${tip.color} flex items-center justify-center flex-shrink-0`}>
