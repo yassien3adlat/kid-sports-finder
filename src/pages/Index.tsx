@@ -383,7 +383,7 @@ const Index = () => {
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
               <Heart className="w-3.5 h-3.5" /> لماذا Helm؟
             </span>
-            <h2 id="benefits-heading" className="text-3xl md:text-[2.5rem] font-black text-foreground mb-8 text-balance leading-tight">
+            <h2 id="benefits-heading" className="text-2xl sm:text-3xl md:text-[2.5rem] font-black text-foreground mb-6 sm:mb-8 text-balance leading-tight">
               كل ما تحتاجه لدعم رحلة طفلك الرياضية
             </h2>
             <div className="space-y-4">
