@@ -522,9 +522,9 @@ const Index = () => {
       </section>
 
       {/* ═══ FOOTER ═══ */}
-      <footer className="bg-card border-t border-border/50 py-14" role="contentinfo">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <footer className="bg-card border-t border-border/50 py-10 sm:py-14" role="contentinfo">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-8 sm:mb-10">
             <div>
               <div className="flex items-center gap-2.5 mb-4">
                 <div className="w-10 h-10 rounded-xl overflow-hidden shadow-soft">
