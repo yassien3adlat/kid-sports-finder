@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Trophy, Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle2, XCircle, Shield, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import helmLogo from "@/assets/helm-logo.png";
 
 function PasswordStrength({ password }: { password: string }) {
   const analysis = useMemo(() => {
@@ -138,8 +139,8 @@ const Auth = () => {
 
       <div className="w-full max-w-md animate-scale-in relative z-10">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-[var(--shadow-lg)] border border-primary-foreground/10">
-            <Trophy className="w-8 h-8 text-primary-foreground" />
+          <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4 shadow-[var(--shadow-lg)] border border-primary-foreground/10">
+            <img src={helmLogo} alt="Helm" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-black text-foreground">{title}</h1>
           <p className="text-sm text-muted-foreground mt-1.5 max-w-xs mx-auto">{subtitle}</p>

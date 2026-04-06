@@ -10,6 +10,7 @@ import {
   ChevronDown, MessageSquare, Award, Rocket, Clock, Play, ArrowDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import helmLogo from "@/assets/helm-logo.png";
 
 const HeroScene3D = lazy(() => import("@/components/HeroScene3D"));
 
@@ -172,8 +173,8 @@ const Index = () => {
       >
         <div className="container mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
-              <Trophy className="w-5 h-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-soft">
+              <img src={helmLogo} alt="Helm" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col">
               <span className={cn("text-xl font-black leading-none transition-colors", navOpacity > 0.5 ? "text-foreground" : "text-white")}>Helm</span>
@@ -525,8 +526,8 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
             <div>
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
-                  <Trophy className="w-5 h-5 text-primary-foreground" aria-hidden="true" />
+                <div className="w-10 h-10 rounded-xl overflow-hidden shadow-soft">
+                  <img src={helmLogo} alt="Helm" className="w-full h-full object-contain" loading="lazy" />
                 </div>
                 <span className="font-black text-foreground text-xl">Helm</span>
               </div>
