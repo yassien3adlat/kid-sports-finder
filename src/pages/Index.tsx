@@ -468,12 +468,12 @@ const Index = () => {
       </section>
 
       {/* ═══ FAQ ═══ */}
-      <section className="container mx-auto px-6 py-24" aria-labelledby="faq-heading">
-        <AnimatedSection className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
+      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24" aria-labelledby="faq-heading">
+        <AnimatedSection className="text-center mb-10 sm:mb-14">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-4 sm:mb-5 border border-primary/10">
             <MessageSquare className="w-3.5 h-3.5" /> أسئلة شائعة
           </span>
-          <h2 id="faq-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
+          <h2 id="faq-heading" className="text-2xl sm:text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
             الأسئلة الأكثر شيوعاً
           </h2>
         </AnimatedSection>
