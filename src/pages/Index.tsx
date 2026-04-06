@@ -203,15 +203,17 @@ const Index = () => {
       </nav>
 
       {/* ═══ HERO ═══ */}
-      <section className="relative min-h-[100vh] flex items-center overflow-hidden" aria-labelledby="hero-heading">
+      <section className="relative min-h-[100svh] flex items-center overflow-hidden" aria-labelledby="hero-heading">
         {/* Deep gradient background */}
         <div className="absolute inset-0 bg-gradient-to-b from-[hsl(160,35%,8%)] via-[hsl(160,25%,12%)] to-background" />
         <div className="absolute inset-0 bg-gradient-to-r from-[hsl(160,40%,6%,0.5)] via-transparent to-[hsl(215,50%,10%,0.3)]" />
 
-        {/* 3D Scene */}
-        <Suspense fallback={null}>
-          <HeroScene3D />
-        </Suspense>
+        {/* 3D Scene — explicit sizing */}
+        <div className="absolute inset-0 w-full h-full z-[1]">
+          <Suspense fallback={null}>
+            <HeroScene3D />
+          </Suspense>
+        </div>
 
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-[0.03] z-[2]" style={{
@@ -220,17 +222,17 @@ const Index = () => {
         }} />
 
         {/* Bottom gradient fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent z-[3]" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent z-[3]" />
 
-        <div className="relative container mx-auto px-6 pt-32 pb-20 text-center z-[4]">
+        <div className="relative container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-16 sm:pb-20 text-center z-[4]">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.08] backdrop-blur-md text-emerald-300 text-sm font-semibold mb-8 animate-fade-in border border-white/10 shadow-[0_0_30px_rgba(46,158,110,0.15)]">
+          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/[0.08] backdrop-blur-md text-emerald-300 text-xs sm:text-sm font-semibold mb-6 sm:mb-8 animate-fade-in border border-white/10 shadow-[0_0_30px_rgba(46,158,110,0.15)]">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-soft" />
             <span>اكتشف موهبة طفلك الرياضية — مجاناً</span>
           </div>
 
           {/* Heading */}
-          <h1 id="hero-heading" className="text-5xl sm:text-6xl md:text-[5rem] font-black text-white mb-6 animate-slide-up leading-[1.1] text-balance tracking-tight drop-shadow-[0_2px_30px_rgba(0,0,0,0.3)]">
+          <h1 id="hero-heading" className="text-3xl sm:text-5xl md:text-6xl lg:text-[5rem] font-black text-white mb-4 sm:mb-6 animate-slide-up leading-[1.15] tracking-tight drop-shadow-[0_2px_30px_rgba(0,0,0,0.3)]">
             اكتشف الرياضة
             <br />
             <span className="bg-gradient-to-l from-emerald-300 via-emerald-400 to-teal-300 bg-clip-text text-transparent">
@@ -239,18 +241,18 @@ const Index = () => {
           </h1>
 
           {/* Accent line */}
-          <div className="w-16 h-1 rounded-full bg-gradient-to-r from-emerald-400 to-teal-300 mx-auto mb-6 animate-scale-in" style={{ animationDelay: '300ms' }} />
+          <div className="w-12 sm:w-16 h-1 rounded-full bg-gradient-to-r from-emerald-400 to-teal-300 mx-auto mb-4 sm:mb-6 animate-scale-in" style={{ animationDelay: '300ms' }} />
 
-          <p className="text-lg md:text-xl text-white/60 mb-12 max-w-xl mx-auto animate-slide-up leading-relaxed text-balance" style={{ animationDelay: '150ms' }}>
+          <p className="text-sm sm:text-lg md:text-xl text-white/60 mb-8 sm:mb-12 max-w-xl mx-auto animate-slide-up leading-relaxed" style={{ animationDelay: '150ms' }}>
             نحلل 8 قدرات بدنية وذهنية لطفلك ونقترح الرياضة الأنسب من 11 رياضة مع متابعة تطوره خطوة بخطوة
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: '250ms' }}>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-slide-up px-2 sm:px-0" style={{ animationDelay: '250ms' }}>
             <Button
               onClick={() => navigate("/auth")}
               size="xl"
-              className="gradient-primary text-primary-foreground text-lg px-12 shadow-[0_0_40px_rgba(46,158,110,0.3)] hover:shadow-[0_0_60px_rgba(46,158,110,0.5)] transition-all hover:scale-[1.03] rounded-2xl press-effect shine-effect group"
+              className="gradient-primary text-primary-foreground text-base sm:text-lg px-8 sm:px-12 shadow-[0_0_40px_rgba(46,158,110,0.3)] hover:shadow-[0_0_60px_rgba(46,158,110,0.5)] transition-all hover:scale-[1.03] rounded-2xl press-effect shine-effect group"
             >
               ابدأ الآن مجاناً
               <ChevronLeft className="w-5 h-5 mr-1 group-hover:-translate-x-1 transition-transform" aria-hidden="true" />
@@ -261,7 +263,7 @@ const Index = () => {
               }}
               variant="outline"
               size="xl"
-              className="text-lg rounded-2xl border-white/15 bg-white/[0.06] backdrop-blur-sm hover:bg-white/10 text-white/80 hover:text-white press-effect"
+              className="text-base sm:text-lg rounded-2xl border-white/15 bg-white/[0.06] backdrop-blur-sm hover:bg-white/10 text-white/80 hover:text-white press-effect"
             >
               <Play className="w-4 h-4 ml-2 text-emerald-400" />
               تعرّف على المزيد
@@ -269,64 +271,64 @@ const Index = () => {
           </div>
 
           {/* Stats — Glass Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 mt-20 animate-fade-in max-w-3xl mx-auto" style={{ animationDelay: '400ms' }} role="list" aria-label="إحصائيات">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 mt-12 sm:mt-20 animate-fade-in max-w-3xl mx-auto" style={{ animationDelay: '400ms' }} role="list" aria-label="إحصائيات">
             {stats.map((stat, i) => (
-              <div key={stat.label} className="text-center backdrop-blur-md bg-white/[0.06] border border-white/10 rounded-2xl p-5 hover:bg-white/[0.1] transition-all" role="listitem" style={{ animationDelay: `${400 + i * 80}ms` }}>
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mx-auto mb-2">
-                  <stat.icon className="w-5 h-5 text-emerald-400" />
+              <div key={stat.label} className="text-center backdrop-blur-md bg-white/[0.06] border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:bg-white/[0.1] transition-all" role="listitem" style={{ animationDelay: `${400 + i * 80}ms` }}>
+                <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/15 flex items-center justify-center mx-auto mb-1.5 sm:mb-2">
+                  <stat.icon className="w-4 sm:w-5 h-4 sm:h-5 text-emerald-400" />
                 </div>
-                <p className="text-3xl md:text-4xl font-black text-white leading-none">
+                <p className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-none">
                   <CountUp target={stat.value} />
                 </p>
-                <p className="text-xs text-white/50 font-medium mt-1.5">{stat.label}</p>
+                <p className="text-[10px] sm:text-xs text-white/50 font-medium mt-1 sm:mt-1.5">{stat.label}</p>
               </div>
             ))}
           </div>
 
           {/* Trust badges */}
-          <div className="flex items-center justify-center gap-6 mt-10 text-xs text-white/40 animate-fade-in" style={{ animationDelay: '600ms' }}>
-            <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-emerald-400/50" /> بيانات مشفرة</span>
-            <span className="hidden sm:flex items-center gap-1.5"><Clock className="w-4 h-4 text-emerald-400/50" /> 8 دقائق فقط</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-400/50" /> مجاني 100%</span>
+          <div className="flex items-center justify-center gap-4 sm:gap-6 mt-6 sm:mt-10 text-[10px] sm:text-xs text-white/40 animate-fade-in flex-wrap" style={{ animationDelay: '600ms' }}>
+            <span className="flex items-center gap-1.5"><Shield className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-emerald-400/50" /> بيانات مشفرة</span>
+            <span className="flex items-center gap-1.5"><Clock className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-emerald-400/50" /> 8 دقائق فقط</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-emerald-400/50" /> مجاني 100%</span>
           </div>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
-            <div className="w-8 h-12 rounded-full border-2 border-white/15 flex items-start justify-center p-2">
-              <div className="w-1 h-2.5 rounded-full bg-white/30 animate-pulse" />
+          <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 animate-float">
+            <div className="w-7 sm:w-8 h-10 sm:h-12 rounded-full border-2 border-white/15 flex items-start justify-center p-1.5 sm:p-2">
+              <div className="w-1 h-2 sm:h-2.5 rounded-full bg-white/30 animate-pulse" />
             </div>
           </div>
         </div>
       </section>
 
       {/* ═══ FEATURES ═══ */}
-      <section className="relative container mx-auto px-6 py-24" aria-labelledby="features-heading">
+      <section className="relative container mx-auto px-4 sm:px-6 py-16 sm:py-24" aria-labelledby="features-heading">
         {/* Background Orb */}
         <div className="orb orb-primary w-96 h-96 -top-20 right-0 opacity-[0.06]" />
 
-        <AnimatedSection className="text-center mb-16">
+        <AnimatedSection className="text-center mb-10 sm:mb-16">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
             <Target className="w-3.5 h-3.5" /> المميزات
           </span>
-          <h2 id="features-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground mb-4 text-balance leading-tight">
+          <h2 id="features-heading" className="text-2xl sm:text-3xl md:text-[2.75rem] font-black text-foreground mb-4 text-balance leading-tight">
             كل ما يحتاجه طفلك في مكان واحد
           </h2>
           <div className="line-accent mx-auto mb-4" />
-          <p className="text-muted-foreground max-w-lg mx-auto text-base">
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base">
             نظام متكامل لاكتشاف المواهب الرياضية وتطويرها بطريقة علمية ومدروسة
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {features.map((feature, i) => (
             <AnimatedSection key={i} delay={i * 100}>
               <Card className="card-premium border-border/30 group h-full bg-card/80 backdrop-blur-sm">
-                <CardContent className="p-7">
+                <CardContent className="p-5 sm:p-7">
                   <div className={cn(
-                    "feature-icon w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm",
+                    "feature-icon w-12 sm:w-14 h-12 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm",
                     feature.color
                   )}>
-                    <feature.icon className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
+                    <feature.icon className="w-6 sm:w-7 h-6 sm:h-7 text-primary-foreground" aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-bold text-foreground mb-2.5">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
@@ -338,26 +340,25 @@ const Index = () => {
       </section>
 
       {/* ═══ HOW IT WORKS ═══ */}
-      <section className="relative overflow-hidden py-24" aria-labelledby="steps-heading">
+      <section className="relative overflow-hidden py-16 sm:py-24" aria-labelledby="steps-heading">
         <div className="absolute inset-0 gradient-surface" />
         <div className="orb orb-accent w-64 h-64 top-10 left-10 opacity-[0.05]" />
 
-        <div className="relative container mx-auto px-6">
-          <AnimatedSection className="text-center mb-16">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
+         <div className="relative container mx-auto px-4 sm:px-6">
+          <AnimatedSection className="text-center mb-10 sm:mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-4 sm:mb-5 border border-primary/10">
               <Zap className="w-3.5 h-3.5" /> كيف يعمل
             </span>
-            <h2 id="steps-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
+            <h2 id="steps-heading" className="text-2xl sm:text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
               4 خطوات بسيطة لاكتشاف موهبة طفلك
             </h2>
           </AnimatedSection>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 max-w-5xl mx-auto">
             {steps.map((item, i) => (
               <AnimatedSection key={i} delay={i * 150} className="text-center group">
-                <div className="relative mb-5">
-                  {/* Step number */}
-                  <div className="w-20 h-20 rounded-3xl gradient-primary flex items-center justify-center mx-auto text-primary-foreground font-black text-3xl group-hover:scale-110 transition-all duration-300 shadow-[var(--shadow-md)] group-hover:shadow-[var(--shadow-glow)] relative overflow-hidden shine-effect">
+                <div className="relative mb-3 sm:mb-5">
+                  <div className="w-14 sm:w-20 h-14 sm:h-20 rounded-2xl sm:rounded-3xl gradient-primary flex items-center justify-center mx-auto text-primary-foreground font-black text-xl sm:text-3xl group-hover:scale-110 transition-all duration-300 shadow-[var(--shadow-md)] group-hover:shadow-[var(--shadow-glow)] relative overflow-hidden shine-effect">
                     {item.step}
                   </div>
                   {/* Connector line */}
@@ -367,8 +368,8 @@ const Index = () => {
                     </div>
                   )}
                 </div>
-                <h3 className="font-bold text-foreground mb-2 text-base">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed max-w-[200px] mx-auto">{item.desc}</p>
+                <h3 className="font-bold text-foreground mb-1.5 sm:mb-2 text-sm sm:text-base">{item.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-[200px] mx-auto">{item.desc}</p>
               </AnimatedSection>
             ))}
           </div>
@@ -376,13 +377,13 @@ const Index = () => {
       </section>
 
       {/* ═══ BENEFITS ═══ */}
-      <section className="container mx-auto px-6 py-24" aria-labelledby="benefits-heading">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24" aria-labelledby="benefits-heading">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 sm:gap-16 items-center">
           <AnimatedSection>
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
               <Heart className="w-3.5 h-3.5" /> لماذا Helm؟
             </span>
-            <h2 id="benefits-heading" className="text-3xl md:text-[2.5rem] font-black text-foreground mb-8 text-balance leading-tight">
+            <h2 id="benefits-heading" className="text-2xl sm:text-3xl md:text-[2.5rem] font-black text-foreground mb-6 sm:mb-8 text-balance leading-tight">
               كل ما تحتاجه لدعم رحلة طفلك الرياضية
             </h2>
             <div className="space-y-4">
@@ -420,22 +421,22 @@ const Index = () => {
       </section>
 
       {/* ═══ TESTIMONIALS ═══ */}
-      <section className="relative overflow-hidden py-24" aria-labelledby="testimonials-heading">
+      <section className="relative overflow-hidden py-16 sm:py-24" aria-labelledby="testimonials-heading">
         <div className="absolute inset-0 gradient-surface" />
         <div className="orb orb-secondary w-80 h-80 bottom-0 right-0 opacity-[0.05]" />
 
-        <div className="relative container mx-auto px-6">
-          <AnimatedSection className="text-center mb-14">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
+        <div className="relative container mx-auto px-4 sm:px-6">
+          <AnimatedSection className="text-center mb-10 sm:mb-14">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-4 sm:mb-5 border border-primary/10">
               <Star className="w-3.5 h-3.5" /> آراء المستخدمين
             </span>
-            <h2 id="testimonials-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground mb-3 leading-tight">
+            <h2 id="testimonials-heading" className="text-2xl sm:text-3xl md:text-[2.75rem] font-black text-foreground mb-2 sm:mb-3 leading-tight">
               ماذا يقول أولياء الأمور؟
             </h2>
-            <p className="text-muted-foreground text-base">أكثر من 500 عائلة استفادت من Helm</p>
+            <p className="text-muted-foreground text-sm sm:text-base">أكثر من 500 عائلة استفادت من Helm</p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 max-w-6xl mx-auto">
             {testimonials.map((t, i) => (
               <AnimatedSection key={i} delay={i * 100}>
                 <Card className="card-premium border-border/30 h-full bg-card/80 backdrop-blur-sm">
@@ -467,12 +468,12 @@ const Index = () => {
       </section>
 
       {/* ═══ FAQ ═══ */}
-      <section className="container mx-auto px-6 py-24" aria-labelledby="faq-heading">
-        <AnimatedSection className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
+      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-24" aria-labelledby="faq-heading">
+        <AnimatedSection className="text-center mb-10 sm:mb-14">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-4 sm:mb-5 border border-primary/10">
             <MessageSquare className="w-3.5 h-3.5" /> أسئلة شائعة
           </span>
-          <h2 id="faq-heading" className="text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
+          <h2 id="faq-heading" className="text-2xl sm:text-3xl md:text-[2.75rem] font-black text-foreground leading-tight">
             الأسئلة الأكثر شيوعاً
           </h2>
         </AnimatedSection>
@@ -487,32 +488,32 @@ const Index = () => {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section className="relative overflow-hidden py-28" aria-labelledby="cta-heading">
+      <section className="relative overflow-hidden py-20 sm:py-28" aria-labelledby="cta-heading">
         <div className="absolute inset-0 gradient-hero" />
         {/* Decorative circles */}
         <div className="absolute top-10 right-10 w-64 h-64 rounded-full border border-primary-foreground/5" />
         <div className="absolute bottom-10 left-10 w-48 h-48 rounded-full border border-primary-foreground/5" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-primary-foreground/[0.03]" />
 
-        <AnimatedSection className="relative container mx-auto px-6 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center mx-auto mb-6 shadow-[var(--shadow-lg)]">
-            <Shield className="w-8 h-8 text-primary-foreground" aria-hidden="true" />
+        <AnimatedSection className="relative container mx-auto px-4 sm:px-6 text-center">
+          <div className="w-14 sm:w-16 h-14 sm:h-16 rounded-2xl bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 sm:mb-6 shadow-[var(--shadow-lg)]">
+            <Shield className="w-7 sm:w-8 h-7 sm:h-8 text-primary-foreground" aria-hidden="true" />
           </div>
-          <h2 id="cta-heading" className="text-3xl md:text-5xl font-black text-primary-foreground mb-5 text-balance leading-tight">
+          <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-5xl font-black text-primary-foreground mb-4 sm:mb-5 text-balance leading-tight">
             جاهز تكتشف رياضة طفلك؟
           </h2>
-          <p className="text-primary-foreground/75 mb-8 text-lg max-w-md mx-auto leading-relaxed">
+          <p className="text-primary-foreground/75 mb-6 sm:mb-8 text-sm sm:text-lg max-w-md mx-auto leading-relaxed">
             سجّل الآن مجاناً وابدأ رحلة اكتشاف موهبة طفلك الرياضية
           </p>
-          <div className="flex items-center justify-center gap-6 text-primary-foreground/50 text-xs mb-12">
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> مجاني بالكامل</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> بدون بطاقة ائتمان</span>
-            <span className="hidden sm:flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> 8 دقائق فقط</span>
+          <div className="flex items-center justify-center gap-4 sm:gap-6 text-primary-foreground/50 text-[10px] sm:text-xs mb-8 sm:mb-12 flex-wrap">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> مجاني بالكامل</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> بدون بطاقة ائتمان</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> 8 دقائق فقط</span>
           </div>
           <Button
             onClick={() => navigate("/auth")}
             size="xl"
-            className="bg-card text-primary hover:bg-card/95 text-lg px-14 shadow-[var(--shadow-2xl)] hover:scale-[1.03] transition-all rounded-2xl font-bold press-effect shine-effect group"
+            className="bg-card text-primary hover:bg-card/95 text-base sm:text-lg px-10 sm:px-14 shadow-[var(--shadow-2xl)] hover:scale-[1.03] transition-all rounded-2xl font-bold press-effect shine-effect group"
           >
             ابدأ مجاناً الآن
             <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -521,9 +522,9 @@ const Index = () => {
       </section>
 
       {/* ═══ FOOTER ═══ */}
-      <footer className="bg-card border-t border-border/50 py-14" role="contentinfo">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <footer className="bg-card border-t border-border/50 py-10 sm:py-14" role="contentinfo">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 mb-8 sm:mb-10">
             <div>
               <div className="flex items-center gap-2.5 mb-4">
                 <div className="w-10 h-10 rounded-xl overflow-hidden shadow-soft">
