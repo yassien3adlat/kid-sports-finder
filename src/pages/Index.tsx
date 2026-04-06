@@ -302,7 +302,7 @@ const Index = () => {
       </section>
 
       {/* ═══ FEATURES ═══ */}
-      <section className="relative container mx-auto px-6 py-24" aria-labelledby="features-heading">
+      <section className="relative container mx-auto px-4 sm:px-6 py-16 sm:py-24" aria-labelledby="features-heading">
         {/* Background Orb */}
         <div className="orb orb-primary w-96 h-96 -top-20 right-0 opacity-[0.06]" />
 
