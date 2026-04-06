@@ -136,13 +136,15 @@ const ProgressContent = () => {
       <div className="container mx-auto px-4 pb-8 max-w-lg space-y-4">
         {!selectedChild ? (
           <div className="space-y-4 animate-fade-in">
-            <Card className="shadow-card border-border/50 overflow-hidden">
-              <div className="gradient-hero p-6 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-primary-foreground/20 flex items-center justify-center mx-auto mb-3">
+            <Card className="shadow-[var(--shadow-lg)] border-border/30 overflow-hidden">
+              <div className="gradient-hero p-6 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-32 h-32 rounded-full bg-primary-foreground/5 -translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 right-1/4 w-20 h-20 rounded-full bg-primary-foreground/[0.03]" />
+                <div className="w-16 h-16 rounded-2xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center mx-auto mb-3 border border-primary-foreground/10 shadow-[var(--shadow-md)] relative">
                   <TrendingUp className="w-8 h-8 text-primary-foreground" />
                 </div>
-                <h2 className="text-xl font-black text-primary-foreground mb-1">متابعة التقدم</h2>
-                <p className="text-primary-foreground/80 text-sm">سجّل تقييم أسبوعي وتابع تطور طفلك بالأرقام</p>
+                <h2 className="text-xl font-black text-primary-foreground mb-1 relative">متابعة التقدم</h2>
+                <p className="text-primary-foreground/80 text-sm relative">سجّل تقييم أسبوعي وتابع تطور طفلك بالأرقام</p>
               </div>
               <CardContent className="p-4 space-y-3">
                 {children.length === 0 ? (
