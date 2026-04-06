@@ -1,0 +1,605 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { Layout } from "@/components/Layout";
+import { AuthGuard } from "@/components/AuthGuard";
+import { PageHeader } from "@/components/PageHeader";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
+  ChevronRight, Trophy, Zap, Heart, Brain,
+  Timer, Users, Target, Sparkles, CheckCircle2, ArrowRight,
+  Flame, Shield, Wind, Smile, ThumbsDown, Star,
+  Share2, RotateCcw,
+} from "lucide-react";
+import {
+  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
+  ResponsiveContainer,
+} from "recharts";
+import { cn } from "@/lib/utils";
+
+interface Child {
+  id: string;
+  name: string;
+  age: number;
+  height_cm: number | null;
+  weight_kg: number | null;
+  gender: string | null;
+}
+
+// 8 assessment dimensions
+const categories = [
+  { key: "speed", label: "السرعة", icon: Zap, color: "text-amber-500" },
+  { key: "endurance", label: "التحمّل", icon: Heart, color: "text-rose-500" },
+  { key: "focus", label: "التركيز", icon: Brain, color: "text-violet-500" },
+  { key: "reaction", label: "ردة الفعل", icon: Timer, color: "text-blue-500" },
+  { key: "teamwork", label: "العمل الجماعي", icon: Users, color: "text-emerald-500" },
+  { key: "accuracy", label: "الدقة", icon: Target, color: "text-orange-500" },
+  { key: "flexibility", label: "المرونة", icon: Wind, color: "text-cyan-500" },
+  { key: "strength", label: "القوة", icon: Shield, color: "text-red-500" },
+];
+
+// 24 questions across 8 categories + preferences
+const questions = [
+  { category: "speed", text: "هل يتميز طفلك بسرعة في الجري مقارنة بأقرانه؟", options: ["سريع جداً ومتميز", "أسرع من المتوسط", "متوسط السرعة", "أبطأ من أقرانه"] },
+  { category: "speed", text: "كيف أداء طفلك في سباقات الجري بالمدرسة؟", options: ["يفوز دائماً أو من الأوائل", "ينافس بقوة ويحقق مراكز جيدة", "يشارك ويستمتع", "لا يفضل السباقات"] },
+  { category: "speed", text: "هل يستطيع طفلك تغيير اتجاهه بسرعة أثناء الجري؟", options: ["نعم، رشيق جداً", "جيد في ذلك", "متوسط", "يجد صعوبة"] },
+  { category: "endurance", text: "كم مدة يستطيع طفلك اللعب دون أن يشعر بالتعب؟", options: ["أكثر من ساعة بنشاط كامل", "45-60 دقيقة", "20-30 دقيقة", "أقل من 15 دقيقة"] },
+  { category: "endurance", text: "بعد الجري أو اللعب الطويل، كم يحتاج للراحة؟", options: ["يرتاح بسرعة ويكمل", "يرتاح قليلاً ثم يكمل", "يحتاج راحة طويلة", "يتعب جداً ويتوقف"] },
+  { category: "endurance", text: "هل يستطيع طفلك ممارسة نشاط بدني يومياً؟", options: ["نعم، كل يوم بدون مشكلة", "غالباً نعم", "أحياناً يحتاج يوم راحة", "يتعب بسرعة ويحتاج فترات طويلة"] },
+  { category: "focus", text: "هل يستطيع طفلك التركيز على نشاط واحد لفترة طويلة؟", options: ["ممتاز - يركز لأكثر من 30 دقيقة", "جيد - 15-20 دقيقة", "متوسط - 10 دقائق", "يتشتت بسهولة"] },
+  { category: "focus", text: "كيف يتعامل طفلك مع التعليمات الجديدة في اللعب؟", options: ["يفهمها ويطبقها فوراً", "يحتاج تكرار بسيط", "يحتاج شرح مفصل ومتعدد", "يجد صعوبة كبيرة"] },
+  { category: "focus", text: "هل يستطيع طفلك تذكر خطط اللعب أو التكتيكات؟", options: ["نعم، ذاكرته ممتازة", "يتذكر معظم التفاصيل", "يتذكر الأساسيات", "ينسى بسرعة"] },
+  { category: "reaction", text: "كيف ردة فعل طفلك عند رمي كرة له فجأة؟", options: ["يمسكها بسرعة وسهولة", "يمسكها في أغلب المرات", "يحاول لكن يفلتها كثيراً", "لا يستجيب بسرعة"] },
+  { category: "reaction", text: "أثناء اللعب الجماعي، هل يتفاعل بسرعة مع التغيرات؟", options: ["سريع الاستجابة جداً", "يتفاعل في معظم الأوقات", "يحتاج وقت للتفكير", "بطيء في الاستجابة"] },
+  { category: "reaction", text: "هل يجيد طفلك ألعاب السرعة والانتباه (زي لعبة الكراسي)؟", options: ["من أفضل اللاعبين دائماً", "جيد ومنافس", "متوسط", "يخسر بسرعة"] },
+  { category: "teamwork", text: "هل يفضل طفلك اللعب مع مجموعة أم بمفرده؟", options: ["يعشق اللعب الجماعي", "يفضل الفريق غالباً", "لا يمانع أي نوع", "يفضل اللعب بمفرده"] },
+  { category: "teamwork", text: "كيف يتعامل طفلك مع زملائه أثناء اللعب الجماعي؟", options: ["قائد يوجه ويحفز الآخرين", "متعاون ومشارك فعال", "يتبع التعليمات بهدوء", "ينعزل ويلعب لوحده"] },
+  { category: "teamwork", text: "هل يستطيع طفلك التنسيق مع شخص آخر لإنجاز مهمة؟", options: ["ممتاز في التنسيق", "جيد غالباً", "يحتاج توجيه", "يفضل يعمل لوحده"] },
+  { category: "accuracy", text: "هل يستطيع طفلك إصابة هدف بالكرة من مسافة؟", options: ["دقيق جداً في التصويب", "يصيب الهدف غالباً", "أحياناً يصيب وأحياناً لا", "يحتاج تدريب كثير"] },
+  { category: "accuracy", text: "كيف أداء طفلك في الأنشطة الدقيقة (رسم، بناء، تلوين)؟", options: ["ممتاز ودقيق جداً", "جيد في معظم الأوقات", "متوسط الدقة", "يحتاج تحسين كبير"] },
+  { category: "accuracy", text: "هل يستطيع طفلك رمي كرة صغيرة في سلة من مسافة؟", options: ["يصيبها من أول مرة غالباً", "يصيبها بعد محاولتين", "يحتاج عدة محاولات", "نادراً ما يصيبها"] },
+  { category: "flexibility", text: "هل يستطيع طفلك لمس أصابع قدميه وهو واقف؟", options: ["نعم بسهولة ويتجاوزها", "يلمسها بصعوبة بسيطة", "يقترب منها لكن لا يلمسها", "بعيد عنها"] },
+  { category: "flexibility", text: "هل يستطيع طفلك عمل حركات جمباز بسيطة (شقلبة/جسر)؟", options: ["نعم بمهارة", "يحاول وينجح أحياناً", "يخاف أو يجد صعوبة", "لا يستطيع إطلاقاً"] },
+  { category: "flexibility", text: "هل جسم طفلك مرن بشكل عام؟", options: ["مرن جداً", "مرونة جيدة", "متوسط المرونة", "جسمه صلب/قليل المرونة"] },
+  { category: "strength", text: "هل يستطيع طفلك تعليق نفسه على بار لفترة؟", options: ["أكثر من 30 ثانية", "15-30 ثانية", "أقل من 10 ثوان", "لا يستطيع"] },
+  { category: "strength", text: "كيف أداء طفلك في تمارين الضغط أو البطن؟", options: ["يعمل عدد كبير بسهولة", "يعمل عدد معقول", "يعمل القليل ويتعب", "لا يستطيع عمل أي تمرين"] },
+  { category: "strength", text: "هل طفلك قوي البنية مقارنة بأقرانه؟", options: ["أقوى من معظمهم", "في نفس المستوى", "أقل قوة قليلاً", "أضعف بكثير"] },
+];
+
+// Preference questions (separate from skill scoring)
+const preferenceQuestions = [
+  {
+    text: "ما الأنشطة التي يستمتع بها طفلك أكثر؟ (اختر الأقرب)",
+    options: [
+      { label: "الجري والسباقات", boosts: ["athletics", "football", "basketball"] },
+      { label: "الماء والسباحة", boosts: ["swimming"] },
+      { label: "الحركات البهلوانية والقفز", boosts: ["gymnastics"] },
+      { label: "الألعاب الجماعية مع أصدقائه", boosts: ["football", "basketball", "handball"] },
+      { label: "الضرب والركل (الكرة أو الألعاب)", boosts: ["karate", "taekwondo", "football"] },
+      { label: "الألعاب التي تحتاج دقة وتركيز", boosts: ["tennis", "gymnastics", "archery"] },
+    ],
+  },
+  {
+    text: "ما الأنشطة التي لا يحبها طفلك؟ (اختر الأقرب)",
+    options: [
+      { label: "لا يحب الماء", penalizes: ["swimming"] },
+      { label: "لا يحب الجري الطويل", penalizes: ["athletics", "football"] },
+      { label: "لا يحب الاحتكاك الجسدي", penalizes: ["karate", "taekwondo", "handball", "wrestling"] },
+      { label: "لا يحب الأنشطة الفردية", penalizes: ["swimming", "athletics", "gymnastics", "tennis"] },
+      { label: "لا يحب الارتفاعات أو الشقلبات", penalizes: ["gymnastics"] },
+      { label: "لا يوجد شيء محدد يكرهه", penalizes: [] },
+    ],
+  },
+  {
+    text: "ما شخصية طفلك الأقرب؟",
+    options: [
+      { label: "قيادي وجريء", boosts: ["football", "basketball", "handball"] },
+      { label: "هادئ ومركز", boosts: ["swimming", "tennis", "gymnastics", "archery"] },
+      { label: "حركي ولا يجلس أبداً", boosts: ["football", "athletics", "gymnastics", "karate"] },
+      { label: "اجتماعي ويحب الفريق", boosts: ["football", "basketball", "handball"] },
+      { label: "تنافسي ويحب الفوز", boosts: ["tennis", "karate", "taekwondo", "athletics"] },
+      { label: "فني ويحب الإبداع", boosts: ["gymnastics", "swimming"] },
+    ],
+  },
+];
+
+// Sport recommendation engine
+const sportProfiles: Record<string, { name: string; emoji: string; desc: string; weights: Record<string, number>; idealHeight?: "tall" | "short" | "any" }> = {
+  football: { name: "كرة القدم", emoji: "⚽", desc: "رياضة جماعية ممتعة تبني اللياقة والعمل الجماعي والسرعة", weights: { speed: 0.2, endurance: 0.2, teamwork: 0.2, accuracy: 0.15, reaction: 0.1, flexibility: 0.05, strength: 0.05, focus: 0.05 } },
+  basketball: { name: "كرة السلة", emoji: "🏀", desc: "رياضة تجمع بين القوة والسرعة والدقة والعمل الجماعي", weights: { speed: 0.15, accuracy: 0.2, reaction: 0.15, teamwork: 0.2, endurance: 0.1, strength: 0.1, focus: 0.05, flexibility: 0.05 }, idealHeight: "tall" },
+  swimming: { name: "السباحة", emoji: "🏊", desc: "رياضة فردية ممتازة تبني التحمل والمرونة وتقوي الجسم بالكامل", weights: { endurance: 0.25, flexibility: 0.2, strength: 0.15, focus: 0.15, speed: 0.1, reaction: 0.05, accuracy: 0.05, teamwork: 0.05 } },
+  tennis: { name: "التنس", emoji: "🎾", desc: "رياضة تتطلب سرعة رد فعل عالية ودقة وتركيز", weights: { reaction: 0.25, accuracy: 0.2, speed: 0.15, focus: 0.15, endurance: 0.1, flexibility: 0.05, strength: 0.05, teamwork: 0.05 } },
+  gymnastics: { name: "الجمباز", emoji: "🤸", desc: "رياضة تجمع بين المرونة والقوة والتركيز والإبداع الحركي", weights: { flexibility: 0.25, focus: 0.2, accuracy: 0.15, strength: 0.15, reaction: 0.1, speed: 0.05, endurance: 0.05, teamwork: 0.05 }, idealHeight: "short" },
+  karate: { name: "الكاراتيه", emoji: "🥋", desc: "فنون قتالية تبني الانضباط والثقة بالنفس والتركيز الذهني", weights: { reaction: 0.2, focus: 0.2, speed: 0.15, strength: 0.15, flexibility: 0.1, accuracy: 0.1, endurance: 0.05, teamwork: 0.05 } },
+  taekwondo: { name: "التايكوندو", emoji: "🥋", desc: "فن قتالي يركز على ركلات القدم والسرعة والمرونة", weights: { flexibility: 0.2, speed: 0.2, reaction: 0.15, strength: 0.15, focus: 0.1, accuracy: 0.1, endurance: 0.05, teamwork: 0.05 } },
+  athletics: { name: "ألعاب القوى", emoji: "🏃", desc: "رياضة تبني السرعة والقوة والتحمل - أساس كل الرياضات", weights: { speed: 0.25, endurance: 0.25, strength: 0.2, focus: 0.1, reaction: 0.1, flexibility: 0.05, accuracy: 0.025, teamwork: 0.025 } },
+  handball: { name: "كرة اليد", emoji: "🤾", desc: "رياضة جماعية سريعة تتطلب قوة ودقة وعمل جماعي", weights: { teamwork: 0.2, strength: 0.2, speed: 0.15, accuracy: 0.15, reaction: 0.1, endurance: 0.1, focus: 0.05, flexibility: 0.05 } },
+  archery: { name: "الرماية", emoji: "🎯", desc: "رياضة تركيز ودقة بامتياز - مثالية للأطفال الهادئين المركزين", weights: { focus: 0.3, accuracy: 0.3, reaction: 0.1, endurance: 0.1, strength: 0.1, speed: 0.05, flexibility: 0.025, teamwork: 0.025 } },
+  wrestling: { name: "المصارعة", emoji: "🤼", desc: "رياضة قوة وتحمل وتكتيك - تبني الثقة والإصرار", weights: { strength: 0.25, endurance: 0.2, reaction: 0.15, flexibility: 0.15, speed: 0.1, focus: 0.1, accuracy: 0.025, teamwork: 0.025 } },
+};
+
+// Motivational messages between category transitions
+const categoryMessages: Record<string, string> = {
+  endurance: "🔥 أحسنت! خلّصنا أسئلة السرعة. الآن نشوف التحمّل...",
+  focus: "💪 ممتاز! الآن نختبر قدرة التركيز والانتباه...",
+  reaction: "🧠 رائع! هل طفلك سريع البديهة؟ نشوف...",
+  teamwork: "⚡ تمام! الآن نشوف مهارات العمل الجماعي...",
+  accuracy: "🤝 أحسنت! نختبر الآن الدقة والتصويب...",
+  flexibility: "🎯 ممتاز! نشوف المرونة والليونة...",
+  strength: "🤸 رائع! آخر قسم — القوة البدنية!",
+};
+
+function AssessmentContent() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [children, setChildren] = useState<Child[]>([]);
+  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+  const [currentQ, setCurrentQ] = useState(0);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [prefAnswers, setPrefAnswers] = useState<number[]>([]);
+  const [phase, setPhase] = useState<"select" | "quiz" | "preferences" | "result">("select");
+  const [scores, setScores] = useState<Record<string, number>>({});
+  const [recommendations, setRecommendations] = useState<{ name: string; emoji: string; desc: string; pct: number }[]>([]);
+  const [currentPrefQ, setCurrentPrefQ] = useState(0);
+  const [showCategoryMsg, setShowCategoryMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("children").select("id, name, age, height_cm, weight_kg, gender").then(({ data }) => {
+      setChildren((data as any) || []);
+    });
+  }, [user]);
+
+  const totalQuestions = questions.length + preferenceQuestions.length;
+  const currentTotal = phase === "quiz" ? currentQ + 1 : questions.length + currentPrefQ + 1;
+  const progress = (currentTotal / totalQuestions) * 100;
+
+  // Category progress dots
+  const completedCategories = new Set(answers.map((_, i) => questions[i]?.category));
+  const currentCategory = questions[currentQ]?.category;
+
+  const handleAnswer = (optionIndex: number) => {
+    const newAnswers = [...answers, optionIndex];
+    setAnswers(newAnswers);
+
+    // Check if next question is a new category
+    if (currentQ + 1 < questions.length) {
+      const nextCat = questions[currentQ + 1].category;
+      const currCat = questions[currentQ].category;
+      if (nextCat !== currCat && categoryMessages[nextCat]) {
+        setShowCategoryMsg(categoryMessages[nextCat]);
+        setTimeout(() => {
+          setShowCategoryMsg(null);
+          setCurrentQ(currentQ + 1);
+        }, 1500);
+        return;
+      }
+      setCurrentQ(currentQ + 1);
+    } else {
+      setPhase("preferences");
+      setCurrentPrefQ(0);
+    }
+  };
+
+  const handlePrefAnswer = (optionIndex: number) => {
+    const newPrefAnswers = [...prefAnswers, optionIndex];
+    setPrefAnswers(newPrefAnswers);
+    if (currentPrefQ + 1 < preferenceQuestions.length) {
+      setCurrentPrefQ(currentPrefQ + 1);
+    } else {
+      calculateResults(answers, newPrefAnswers);
+    }
+  };
+
+  const calculateResults = async (allAnswers: number[], allPrefAnswers: number[]) => {
+    const catScores: Record<string, number[]> = {};
+    categories.forEach((c) => (catScores[c.key] = []));
+    allAnswers.forEach((ans, i) => {
+      catScores[questions[i].category].push(3 - ans);
+    });
+
+    const finalScores: Record<string, number> = {};
+    Object.entries(catScores).forEach(([key, vals]) => {
+      finalScores[key] = Math.round((vals.reduce((a, b) => a + b, 0) / (vals.length * 3)) * 100);
+    });
+    setScores(finalScores);
+
+    const sportScores: Record<string, number> = {};
+    Object.entries(sportProfiles).forEach(([key, sport]) => {
+      let score = 0;
+      Object.entries(sport.weights).forEach(([dim, weight]) => {
+        score += (finalScores[dim] || 0) * weight;
+      });
+
+      if (selectedChild?.height_cm && sport.idealHeight) {
+        const age = selectedChild.age || 10;
+        const avgHeight: Record<number, number> = { 3: 95, 4: 102, 5: 109, 6: 115, 7: 121, 8: 127, 9: 132, 10: 137, 11: 143, 12: 149, 13: 156, 14: 163, 15: 168, 16: 172, 17: 175, 18: 177 };
+        const avg = avgHeight[age] || 137;
+        const isAbove = selectedChild.height_cm > avg + 5;
+        const isBelow = selectedChild.height_cm < avg - 5;
+        if (sport.idealHeight === "tall" && isAbove) score += 5;
+        if (sport.idealHeight === "tall" && isBelow) score -= 5;
+        if (sport.idealHeight === "short" && isBelow) score += 5;
+        if (sport.idealHeight === "short" && isAbove) score -= 3;
+      }
+
+      sportScores[key] = score;
+    });
+
+    allPrefAnswers.forEach((ans, i) => {
+      const pq = preferenceQuestions[i];
+      const option = pq.options[ans] as any;
+      if (option.boosts) {
+        option.boosts.forEach((s: string) => {
+          if (sportScores[s] != null) sportScores[s] += 8;
+        });
+      }
+      if (option.penalizes) {
+        option.penalizes.forEach((s: string) => {
+          if (sportScores[s] != null) sportScores[s] -= 15;
+        });
+      }
+    });
+
+    const maxScore = Math.max(...Object.values(sportScores));
+    const minScore = Math.min(...Object.values(sportScores));
+    const range = maxScore - minScore || 1;
+
+    const recs = Object.entries(sportProfiles)
+      .map(([key, sport]) => ({
+        name: sport.name,
+        emoji: sport.emoji,
+        desc: sport.desc,
+        pct: Math.round(((sportScores[key] - minScore) / range) * 40 + 60),
+      }))
+      .sort((a, b) => b.pct - a.pct)
+      .slice(0, 5);
+
+    setRecommendations(recs);
+
+    if (user && selectedChild) {
+      await Promise.all([
+        supabase.from("assessment_results").insert([{
+          user_id: user.id, child_id: selectedChild.id,
+          answers: { skillAnswers: allAnswers, prefAnswers: allPrefAnswers } as any,
+          recommended_sports: recs as any,
+          score: recs[0]?.pct || 0,
+        }]),
+        supabase.from("children").update({ recommended_sport: recs[0]?.name || "" }).eq("id", selectedChild.id),
+      ]);
+    }
+    setPhase("result");
+  };
+
+  const q = questions[currentQ];
+  const cat = categories.find((c) => c.key === q?.category);
+  const prefQ = preferenceQuestions[currentPrefQ];
+
+  const goBack = () => {
+    if (phase === "quiz" && currentQ > 0) {
+      setCurrentQ(currentQ - 1);
+      setAnswers(answers.slice(0, -1));
+    } else if (phase === "preferences" && currentPrefQ > 0) {
+      setCurrentPrefQ(currentPrefQ - 1);
+      setPrefAnswers(prefAnswers.slice(0, -1));
+    } else if (phase === "preferences" && currentPrefQ === 0) {
+      setPhase("quiz");
+      setCurrentQ(questions.length - 1);
+      setAnswers(answers.slice(0, -1));
+    }
+  };
+
+  const radarData = categories.map((c) => ({ subject: c.label, value: scores[c.key] || 0, fullMark: 100 }));
+
+  const handleShare = async () => {
+    const text = `🏆 نتائج اختبار Helm لـ ${selectedChild?.name}\n\nالرياضة الأنسب: ${recommendations[0]?.emoji} ${recommendations[0]?.name} (${recommendations[0]?.pct}% توافق)\n\nاكتشف رياضة طفلك: ${window.location.origin}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "نتائج اختبار Helm", text }); } catch {}
+    } else {
+      await navigator.clipboard.writeText(text);
+      import("sonner").then(({ toast }) => toast.success("تم نسخ النتائج! 📋"));
+    }
+  };
+
+  // Top 3 strengths
+  const topStrengths = Object.entries(scores)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 3)
+    .map(([key]) => categories.find((c) => c.key === key)!);
+
+  return (
+    <Layout>
+      <PageHeader title="اختبار القدرات" backTo="/dashboard" />
+      <div className="container mx-auto px-4 pb-8 max-w-2xl">
+        {/* ===== SELECT CHILD ===== */}
+        {phase === "select" && (
+          <div className="space-y-4 animate-fade-in">
+            <Card className="shadow-card border-border/50 overflow-hidden">
+              <div className="gradient-hero p-6 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-primary-foreground/20 flex items-center justify-center mx-auto mb-3">
+                  <Brain className="w-8 h-8 text-primary-foreground" />
+                </div>
+                <h2 className="text-xl font-black text-primary-foreground mb-1">اختبار القدرات الرياضية</h2>
+                <p className="text-primary-foreground/80 text-sm">{totalQuestions} سؤال • 8 دقائق</p>
+              </div>
+              <CardContent className="p-5 space-y-4">
+                <div className="bg-muted/30 rounded-2xl p-3 border border-border/40">
+                  <p className="text-xs font-bold text-foreground mb-2">نقيس 8 قدرات أساسية + تفضيلات طفلك:</p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {categories.map((c) => (
+                      <div key={c.key} className="text-center">
+                        <c.icon className={cn("w-5 h-5 mx-auto mb-0.5", c.color)} />
+                        <p className="text-[9px] text-muted-foreground font-medium leading-tight">{c.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-primary/5 rounded-xl p-3 border border-primary/10">
+                  <div className="flex items-start gap-2">
+                    <Smile className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold text-foreground">نسأل عن تفضيلاته أيضاً</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">بنسأل عن اللي بيحبه وبيكرهه عشان النتيجة تكون دقيقة ومناسبة</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-foreground">اختر الطفل</label>
+                  {children.length === 0 ? (
+                    <div className="text-center py-6">
+                      <p className="text-muted-foreground text-sm mb-3">أضف طفلاً أولاً لبدء الاختبار</p>
+                      <Button onClick={() => navigate("/add-child")} className="gradient-primary text-primary-foreground rounded-xl">إضافة طفل</Button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-2">
+                      {children.map((child) => (
+                        <button key={child.id} onClick={() => setSelectedChild(child)}
+                          className={cn("flex items-center gap-3 p-3 rounded-xl border-2 transition-all press-effect text-right",
+                            selectedChild?.id === child.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/30")}>
+                          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-primary-foreground font-bold flex-shrink-0">
+                            {child.gender === "female" ? "👧" : child.gender === "male" ? "👦" : child.name[0]}
+                          </div>
+                          <div>
+                            <p className="font-bold text-foreground text-sm">{child.name}</p>
+                            <p className="text-muted-foreground text-xs">{child.age} سنوات{child.height_cm ? ` • ${child.height_cm} سم` : ""}</p>
+                          </div>
+                          {selectedChild?.id === child.id && <CheckCircle2 className="w-5 h-5 text-primary mr-auto" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {selectedChild && (
+                  <Button onClick={() => setPhase("quiz")} className="w-full gradient-primary text-primary-foreground rounded-xl py-6 text-base press-effect">
+                    ابدأ الاختبار <ArrowRight className="w-5 h-5 mr-2" />
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* ===== CATEGORY TRANSITION MESSAGE ===== */}
+        {showCategoryMsg && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-fade-in">
+            <div className="text-center p-8 animate-scale-in">
+              <p className="text-xl font-black text-foreground">{showCategoryMsg}</p>
+            </div>
+          </div>
+        )}
+
+        {/* ===== SKILL QUIZ ===== */}
+        {phase === "quiz" && q && !showCategoryMsg && (
+          <div className="space-y-4 animate-fade-in" key={`q-${currentQ}`}>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>السؤال {currentTotal} من {totalQuestions}</span>
+                <span className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-full">
+                  {cat && <cat.icon className={cn("w-3.5 h-3.5", cat.color)} />}
+                  <span className="font-medium">{cat?.label}</span>
+                </span>
+              </div>
+              <Progress value={progress} className="h-2.5 rounded-full" />
+              {/* Category progress dots */}
+              <div className="flex items-center justify-center gap-1.5 pt-1">
+                {categories.map((c) => (
+                  <div
+                    key={c.key}
+                    className={cn(
+                      "w-2 h-2 rounded-full transition-all",
+                      c.key === currentCategory ? "w-5 bg-primary" :
+                      completedCategories.has(c.key) ? "bg-primary/40" : "bg-border"
+                    )}
+                    title={c.label}
+                  />
+                ))}
+              </div>
+            </div>
+            <Card className="shadow-card border-border/50">
+              <CardContent className="p-5 space-y-5">
+                <h3 className="text-lg font-bold text-foreground leading-relaxed">{q.text}</h3>
+                <div className="space-y-2">
+                  {q.options.map((opt, i) => (
+                    <button key={i} onClick={() => handleAnswer(i)}
+                      className="w-full text-right p-4 rounded-xl border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all press-effect text-sm font-medium text-foreground">
+                      <span className="flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-full border-2 border-border flex items-center justify-center text-xs font-bold text-muted-foreground flex-shrink-0">
+                          {["أ", "ب", "ج", "د"][i]}
+                        </span>
+                        {opt}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            {currentQ > 0 && (
+              <Button variant="ghost" onClick={goBack} className="text-muted-foreground">
+                <ChevronRight className="w-4 h-4 ml-1" /> السؤال السابق
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* ===== PREFERENCES ===== */}
+        {phase === "preferences" && prefQ && (
+          <div className="space-y-4 animate-fade-in" key={`pq-${currentPrefQ}`}>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>السؤال {currentTotal} من {totalQuestions}</span>
+                <span className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1 rounded-full text-primary font-medium">
+                  {currentPrefQ === 0 && <><Smile className="w-3.5 h-3.5" /> بيحب إيه</>}
+                  {currentPrefQ === 1 && <><ThumbsDown className="w-3.5 h-3.5" /> بيكره إيه</>}
+                  {currentPrefQ === 2 && <><Star className="w-3.5 h-3.5" /> شخصيته</>}
+                </span>
+              </div>
+              <Progress value={progress} className="h-2.5 rounded-full" />
+            </div>
+            <Card className="shadow-card border-border/50">
+              <div className="h-1.5 bg-gradient-to-r from-primary via-secondary to-accent" />
+              <CardContent className="p-5 space-y-5">
+                <div>
+                  <p className="text-xs text-primary font-bold mb-1">🎯 أسئلة التفضيلات</p>
+                  <h3 className="text-lg font-bold text-foreground leading-relaxed">{prefQ.text}</h3>
+                </div>
+                <div className="space-y-2">
+                  {prefQ.options.map((opt, i) => (
+                    <button key={i} onClick={() => handlePrefAnswer(i)}
+                      className="w-full text-right p-4 rounded-xl border-2 border-border hover:border-secondary/50 hover:bg-secondary/5 transition-all press-effect text-sm font-medium text-foreground">
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Button variant="ghost" onClick={goBack} className="text-muted-foreground">
+              <ChevronRight className="w-4 h-4 ml-1" /> السؤال السابق
+            </Button>
+          </div>
+        )}
+
+        {/* ===== RESULTS ===== */}
+        {phase === "result" && (
+          <div className="space-y-5 animate-fade-in">
+            <Card className="shadow-card border-border/50 overflow-hidden">
+              <div className="gradient-hero p-5 text-center">
+                <Sparkles className="w-8 h-8 text-primary-foreground mx-auto mb-2" />
+                <h2 className="text-xl font-black text-primary-foreground">نتائج التحليل الشامل</h2>
+                <p className="text-primary-foreground/70 text-sm mt-1">{selectedChild?.name} • بناءً على {totalQuestions} سؤال</p>
+              </div>
+              <CardContent className="p-4">
+                <div className="h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart data={radarData}>
+                      <PolarGrid stroke="hsl(var(--border))" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
+                      <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                      <Radar dataKey="value" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="grid grid-cols-4 gap-2 mt-3">
+                  {categories.map((c) => (
+                    <div key={c.key} className="text-center p-2 rounded-xl bg-muted/30 border border-border/30">
+                      <c.icon className={cn("w-4 h-4 mx-auto mb-0.5", c.color)} />
+                      <p className="text-[9px] text-muted-foreground">{c.label}</p>
+                      <p className="text-sm font-black text-foreground">{scores[c.key] || 0}%</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Top strengths */}
+            {topStrengths.length > 0 && (
+              <Card className="shadow-card border-border/50">
+                <CardContent className="p-4">
+                  <h3 className="text-sm font-bold text-foreground mb-2 flex items-center gap-1.5">
+                    <Flame className="w-4 h-4 text-secondary" /> أبرز نقاط القوة
+                  </h3>
+                  <div className="flex gap-2">
+                    {topStrengths.map((s, i) => (
+                      <div key={s.key} className="flex-1 text-center p-2.5 rounded-xl bg-primary/5 border border-primary/10">
+                        <s.icon className={cn("w-5 h-5 mx-auto mb-1", s.color)} />
+                        <p className="text-xs font-bold text-foreground">{s.label}</p>
+                        <p className="text-lg font-black text-primary">{scores[s.key]}%</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <div>
+              <h3 className="text-lg font-bold text-foreground mb-1">الرياضات المقترحة لـ {selectedChild?.name}</h3>
+              <p className="text-xs text-muted-foreground mb-3">مرتبة حسب التوافق مع قدرات وتفضيلات طفلك</p>
+              <div className="space-y-3">
+                {recommendations.map((rec, i) => (
+                  <Card key={i} className={cn(
+                    "shadow-card border-border/50 transition-all overflow-hidden",
+                    i === 0 && "border-primary/40 shadow-elevated"
+                  )}>
+                    {i === 0 && <div className="h-1.5 gradient-primary" />}
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl",
+                          i === 0 ? "gradient-primary" : i === 1 ? "bg-secondary/10" : "bg-muted"
+                        )}>
+                          {i === 0 ? <Trophy className="w-7 h-7 text-primary-foreground" /> : rec.emoji}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <h4 className="font-bold text-foreground">{rec.emoji} {rec.name}</h4>
+                            {i === 0 && <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold animate-pulse">⭐ الأنسب</span>}
+                            {i === 1 && <span className="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold">ممتاز</span>}
+                          </div>
+                          <p className="text-[11px] text-muted-foreground leading-relaxed">{rec.desc}</p>
+                        </div>
+                        <div className="text-left flex-shrink-0">
+                          <p className={cn("text-2xl font-black", i === 0 ? "text-primary" : i === 1 ? "text-secondary" : "text-muted-foreground")}>{rec.pct}%</p>
+                          <p className="text-[10px] text-muted-foreground">توافق</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-muted/30 rounded-2xl p-4 border border-border/40">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                💡 <strong className="text-foreground">ملاحظة:</strong> النتائج بناءً على تحليل القدرات البدنية والتفضيلات الشخصية لطفلك. ننصح بتجربة الرياضة الأولى والثانية ومراقبة استمتاع الطفل وتطوره.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <Button onClick={() => navigate("/dashboard")} className="flex-1 gradient-primary text-primary-foreground rounded-xl py-6 press-effect">
+                العودة للرئيسية
+              </Button>
+              <Button variant="outline" onClick={handleShare} className="rounded-xl py-6 px-4">
+                <Share2 className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" onClick={() => {
+                setPhase("select"); setCurrentQ(0); setAnswers([]);
+                setPrefAnswers([]); setCurrentPrefQ(0);
+                setScores({}); setRecommendations([]); setSelectedChild(null);
+                setShowCategoryMsg(null);
+              }} className="rounded-xl py-6 px-4">
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
+}
+
+const Assessment = () => (<AuthGuard><AssessmentContent /></AuthGuard>);
+export default Assessment;
