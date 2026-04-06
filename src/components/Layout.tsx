@@ -2,6 +2,7 @@ import { ReactNode, memo, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, Trophy, TrendingUp, Video, User, MapPin, BookOpen, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import helmLogo from "@/assets/helm-logo.png";
 
 interface LayoutProps {
   children: ReactNode;
