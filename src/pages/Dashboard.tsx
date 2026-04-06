@@ -90,7 +90,6 @@ function DashboardContent() {
         totalHours: Math.round(totalHours * 10) / 10,
       });
 
-      // Last activity
       const lastAssess = assessRes.data?.[0]?.completed_at;
       const lastProgress = progressData[0]?.created_at;
       const latest = [lastAssess, lastProgress].filter(Boolean).sort().reverse()[0];
@@ -115,7 +114,7 @@ function DashboardContent() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-14 h-14">
-            <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
+            <div className="absolute inset-0 rounded-full border-4 border-primary/15" />
             <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin" />
           </div>
           <p className="text-sm text-muted-foreground animate-pulse">جاري تحميل لوحة التحكم...</p>
@@ -127,19 +126,23 @@ function DashboardContent() {
   return (
     <Layout>
       {/* Header with gradient */}
-      <header className="bg-card border-b border-border/50 overflow-hidden">
-        <div className="gradient-hero px-5 pt-6 pb-5">
-          <div className="container mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center shadow-soft">
+      <header className="bg-card border-b border-border/30 overflow-hidden">
+        <div className="gradient-hero px-5 pt-7 pb-6 relative overflow-hidden">
+          {/* Decorative Orbs */}
+          <div className="absolute top-0 left-0 w-40 h-40 rounded-full bg-primary-foreground/5 -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-primary-foreground/5 translate-x-1/3 translate-y-1/3" />
+
+          <div className="container mx-auto relative">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3.5">
+                <div className="w-13 h-13 rounded-2xl bg-primary-foreground/15 backdrop-blur-md flex items-center justify-center shadow-[var(--shadow-md)] border border-primary-foreground/10" style={{ width: '52px', height: '52px' }}>
                   <span className="text-xl font-black text-primary-foreground">
                     {firstName[0]}
                   </span>
                 </div>
                 <div>
-                  <p className="text-xs text-primary-foreground/70">{getGreeting()}</p>
-                  <h1 className="text-lg font-black text-primary-foreground leading-tight">{firstName}</h1>
+                  <p className="text-xs text-primary-foreground/60 font-medium">{getGreeting()}</p>
+                  <h1 className="text-xl font-black text-primary-foreground leading-tight">{firstName}</h1>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -148,30 +151,32 @@ function DashboardContent() {
                   className="p-2.5 rounded-xl hover:bg-primary-foreground/10 transition-colors"
                   aria-label="الملف الشخصي"
                 >
-                  <UserCircle className="w-5 h-5 text-primary-foreground/80" />
+                  <UserCircle className="w-5 h-5 text-primary-foreground/70" />
                 </Link>
                 <button
                   onClick={handleSignOut}
                   className="p-2.5 rounded-xl hover:bg-primary-foreground/10 transition-colors"
                   aria-label="تسجيل الخروج"
                 >
-                  <LogOut className="w-4 h-4 text-primary-foreground/80" />
+                  <LogOut className="w-4 h-4 text-primary-foreground/70" />
                 </button>
               </div>
             </div>
 
-            {/* Stats row inside gradient */}
-            <div className="flex items-center gap-2">
+            {/* Stats row */}
+            <div className="flex items-center gap-2.5">
               {[
                 { icon: UserCircle, value: stats.totalChildren, label: "أطفال" },
                 { icon: ClipboardCheck, value: stats.totalAssessments, label: "اختبار" },
                 { icon: Clock, value: stats.totalHours, label: "ساعة تدريب" },
               ].map((s) => (
-                <div key={s.label} className="flex-1 flex items-center gap-2 bg-primary-foreground/15 backdrop-blur-sm rounded-xl px-3 py-2.5">
-                  <s.icon className="w-4 h-4 text-primary-foreground/80 flex-shrink-0" />
+                <div key={s.label} className="flex-1 flex items-center gap-2.5 bg-primary-foreground/10 backdrop-blur-md rounded-2xl px-3.5 py-3 border border-primary-foreground/5">
+                  <div className="w-8 h-8 rounded-xl bg-primary-foreground/10 flex items-center justify-center flex-shrink-0">
+                    <s.icon className="w-4 h-4 text-primary-foreground/80" />
+                  </div>
                   <div className="min-w-0">
-                    <p className="text-base font-black text-primary-foreground leading-none">{s.value}</p>
-                    <p className="text-[10px] text-primary-foreground/60 mt-0.5">{s.label}</p>
+                    <p className="text-lg font-black text-primary-foreground leading-none">{s.value}</p>
+                    <p className="text-[10px] text-primary-foreground/50 mt-0.5 font-medium">{s.label}</p>
                   </div>
                 </div>
               ))}
@@ -181,13 +186,13 @@ function DashboardContent() {
 
         {/* Last activity ribbon */}
         {lastActivity && (
-          <div className="bg-card px-5 py-2 flex items-center justify-between">
+          <div className="bg-card/80 backdrop-blur-sm px-5 py-2.5 flex items-center justify-between border-b border-border/20">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Activity className="w-3.5 h-3.5 text-primary" />
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               <span>آخر نشاط: <strong className="text-foreground">{lastActivity}</strong></span>
             </div>
             {stats.totalAssessments > 0 && (
-              <div className="flex items-center gap-1 text-xs text-primary font-semibold">
+              <div className="flex items-center gap-1 text-xs text-primary font-bold">
                 <ArrowUp className="w-3 h-3" />
                 نشط
               </div>
@@ -196,27 +201,27 @@ function DashboardContent() {
         )}
       </header>
 
-      <div className="container mx-auto px-5 py-5 space-y-5">
+      <div className="container mx-auto px-5 py-6 space-y-6">
         {/* Children Section */}
         <section aria-labelledby="children-heading">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h2 id="children-heading" className="text-base font-bold text-foreground">أطفالي</h2>
               {children.length > 0 && (
-                <p className="text-[11px] text-muted-foreground">{children.length} {children.length === 1 ? "طفل مسجل" : "أطفال مسجلين"}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{children.length} {children.length === 1 ? "طفل مسجل" : "أطفال مسجلين"}</p>
               )}
             </div>
             <Button
               onClick={() => navigate("/add-child")}
               size="sm"
-              className="gradient-primary text-primary-foreground rounded-xl h-8 text-xs px-3"
+              className="gradient-primary text-primary-foreground rounded-xl h-9 text-xs px-4 shadow-soft press-effect shine-effect"
             >
               <Plus className="w-3.5 h-3.5 ml-1" /> إضافة
             </Button>
           </div>
 
           {children.length === 0 ? (
-            <Card className="shadow-card border-dashed border-2 border-border/60 bg-card/50">
+            <Card className="shadow-[var(--shadow-md)] border-dashed border-2 border-border/50 bg-card/60">
               <EmptyState
                 icon={UserCircle}
                 title="لم تقم بإضافة أطفال بعد"
@@ -226,12 +231,12 @@ function DashboardContent() {
               />
             </Card>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {children.map((child, i) => (
                 <Card
                   key={child.id}
                   className={cn(
-                    "shadow-card hover:shadow-elevated transition-all duration-200 cursor-pointer group border-border/50 hover:border-primary/30",
+                    "card-premium border-border/30 cursor-pointer group bg-card/80",
                     `animate-fade-in stagger-${i + 1}`
                   )}
                   onClick={() => navigate(`/child/${child.id}`)}
@@ -240,30 +245,30 @@ function DashboardContent() {
                   aria-label={`عرض ملف ${child.name}`}
                   onKeyDown={(e) => e.key === "Enter" && navigate(`/child/${child.id}`)}
                 >
-                  <CardContent className="p-3.5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center text-primary-foreground font-bold text-lg shadow-sm flex-shrink-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-13 h-13 rounded-2xl gradient-primary flex items-center justify-center text-primary-foreground font-bold text-lg shadow-soft flex-shrink-0" style={{ width: '52px', height: '52px' }}>
                         {child.gender === "female" ? "👧" : child.gender === "male" ? "👦" : child.name[0]}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-foreground text-sm truncate">{child.name}</h3>
-                        <div className="flex items-center gap-2 mt-0.5">
+                        <div className="flex items-center gap-2.5 mt-1">
                           <span className="text-muted-foreground text-xs">{child.age} سنوات</span>
                           {child.skill_level && (
-                            <span className="flex items-center gap-0.5 text-[10px] text-secondary font-medium">
+                            <span className="flex items-center gap-0.5 text-[10px] text-secondary font-bold">
                               <Star className="w-3 h-3 fill-secondary" />
                               {child.skill_level}
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         {child.recommended_sport && (
-                          <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-semibold">
+                          <span className="px-3 py-1.5 rounded-full bg-primary/8 text-primary text-[10px] font-bold border border-primary/10">
                             {child.recommended_sport}
                           </span>
                         )}
-                        <ChevronLeft className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:-translate-x-0.5 transition-all" />
+                        <ChevronLeft className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:-translate-x-1 transition-all duration-200" />
                       </div>
                     </div>
                   </CardContent>
@@ -273,15 +278,15 @@ function DashboardContent() {
           )}
         </section>
 
-        {/* Services Grid - Enhanced */}
+        {/* Services Grid */}
         <section aria-labelledby="services-heading">
-          <h2 id="services-heading" className="text-base font-bold text-foreground mb-3">الخدمات</h2>
-          <div className="grid grid-cols-3 gap-2.5">
+          <h2 id="services-heading" className="text-base font-bold text-foreground mb-4">الخدمات</h2>
+          <div className="grid grid-cols-3 gap-3">
             {menuItems.map((item, i) => (
               <Card
                 key={item.path}
                 className={cn(
-                  "shadow-card hover:shadow-elevated transition-all duration-200 hover:-translate-y-1 cursor-pointer border-border/50 group overflow-hidden",
+                  "card-premium border-border/30 cursor-pointer group overflow-hidden bg-card/80",
                   `animate-fade-in stagger-${i + 1}`
                 )}
                 onClick={() => navigate(item.path)}
@@ -290,8 +295,8 @@ function DashboardContent() {
                 aria-label={item.label}
                 onKeyDown={(e) => e.key === "Enter" && navigate(item.path)}
               >
-                <CardContent className="p-3 flex flex-col items-center text-center gap-1.5">
-                  <div className={cn("w-11 h-11 rounded-xl bg-gradient-to-br flex items-center justify-center group-hover:scale-110 transition-transform duration-200 shadow-sm", item.color)}>
+                <CardContent className="p-3.5 flex flex-col items-center text-center gap-2">
+                  <div className={cn("feature-icon w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm", item.color)}>
                     <item.icon className="w-5 h-5 text-primary-foreground" />
                   </div>
                   <div>
@@ -304,24 +309,24 @@ function DashboardContent() {
           </div>
         </section>
 
-        {/* Quick Action CTA - only if no assessments */}
+        {/* Quick Action CTA */}
         {stats.totalAssessments === 0 && children.length > 0 && (
-          <Card className="shadow-elevated border-primary/20 overflow-hidden animate-fade-in">
-            <div className="h-1.5 gradient-primary" />
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-11 h-11 rounded-xl gradient-secondary flex items-center justify-center flex-shrink-0 shadow-sm">
+          <Card className="shadow-[var(--shadow-lg)] border-primary/15 overflow-hidden animate-fade-in bg-card/90">
+            <div className="h-1 gradient-primary" />
+            <CardContent className="p-5">
+              <div className="flex items-start gap-4">
+                <div className="feature-icon w-12 h-12 rounded-xl gradient-secondary flex items-center justify-center flex-shrink-0 shadow-sm">
                   <Sparkles className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-foreground text-sm mb-0.5">ابدأ أول اختبار!</h3>
+                  <h3 className="font-bold text-foreground text-sm mb-1">ابدأ أول اختبار!</h3>
                   <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">
                     اكتشف الرياضة المناسبة لطفلك من خلال اختبار يحلل 8 قدرات أساسية
                   </p>
                   <Button
                     onClick={() => navigate("/assessment")}
                     size="sm"
-                    className="gradient-primary text-primary-foreground rounded-xl h-8 text-xs px-4 press-effect"
+                    className="gradient-primary text-primary-foreground rounded-xl h-9 text-xs px-5 press-effect shine-effect shadow-soft"
                   >
                     <Trophy className="w-3.5 h-3.5 ml-1" /> ابدأ الاختبار
                   </Button>
@@ -332,20 +337,20 @@ function DashboardContent() {
         )}
 
         {/* Daily Tip Card */}
-        <Card className="shadow-card border-border/50 overflow-hidden">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary to-amber-400 flex items-center justify-center flex-shrink-0 shadow-sm">
+        <Card className="shadow-[var(--shadow-sm)] border-border/30 overflow-hidden bg-card/80">
+          <CardContent className="p-5">
+            <div className="flex items-start gap-3.5">
+              <div className="feature-icon w-11 h-11 rounded-xl bg-gradient-to-br from-secondary to-amber-400 flex items-center justify-center flex-shrink-0 shadow-sm">
                 <Flame className="w-5 h-5 text-primary-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
+                <div className="flex items-center gap-2.5 mb-1">
                   <h3 className="font-bold text-foreground text-xs">نصيحة اليوم</h3>
-                  <span className="text-[9px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
+                  <span className="text-[9px] text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full font-medium">
                     {new Date().toLocaleDateString("ar-EG", { weekday: "long" })}
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                <p className="text-[12px] text-muted-foreground leading-relaxed">
                   {todayTip}
                 </p>
               </div>

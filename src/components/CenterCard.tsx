@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Clock, Star, Navigation, ExternalLink, Users, Banknote, Share2, MessageCircle, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-react";
 import { Center, sportIcons } from "@/data/centers";
+import { cn } from "@/lib/utils";
 
 interface CenterCardProps {
   center: Center & { distance?: number | null };
@@ -30,30 +31,30 @@ export function CenterCard({ center }: CenterCardProps) {
   };
 
   return (
-    <Card className="group shadow-card border-border/50 hover:shadow-elevated transition-all duration-300 overflow-hidden">
+    <Card className="group card-premium border-border/30 overflow-hidden bg-card/80">
       <CardContent className="p-0">
-        <div className="h-1.5 gradient-primary opacity-80 group-hover:opacity-100 transition-opacity" />
+        <div className="h-1 gradient-primary opacity-70 group-hover:opacity-100 transition-opacity" />
         
-        <div className="p-4 space-y-3">
+        <div className="p-5 space-y-3.5">
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                 <h3 className="font-bold text-foreground text-[15px] leading-tight">{center.name}</h3>
                 {center.hasTrial && (
-                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold whitespace-nowrap border border-primary/20">
+                  <span className="px-2.5 py-0.5 rounded-full bg-primary/8 text-primary text-[10px] font-bold whitespace-nowrap border border-primary/10">
                     🎯 تجربة مجانية
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-primary/60" />
+                <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-primary/50" />
                 <span className="line-clamp-1">{center.address}</span>
               </div>
             </div>
             
             {/* Rating */}
-            <div className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 rounded-2xl flex-shrink-0 border border-amber-200/50 dark:border-amber-500/20">
+            <div className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 px-3.5 py-2.5 rounded-2xl flex-shrink-0 border border-amber-200/40 dark:border-amber-500/15 shadow-[var(--shadow-xs)]">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
               <span className="text-sm font-black text-amber-700 dark:text-amber-400">{center.rating}</span>
             </div>
@@ -61,7 +62,7 @@ export function CenterCard({ center }: CenterCardProps) {
 
           {/* Distance */}
           {center.distance != null && (
-            <p className="text-xs text-primary font-bold flex items-center gap-1.5 bg-primary/5 rounded-lg px-2.5 py-1 w-fit border border-primary/10">
+            <p className="text-xs text-primary font-bold flex items-center gap-1.5 bg-primary/5 rounded-xl px-3 py-1.5 w-fit border border-primary/8">
               <Navigation className="w-3.5 h-3.5" />
               {center.distance < 1
                 ? `${Math.round(center.distance * 1000)} متر`
@@ -72,24 +73,24 @@ export function CenterCard({ center }: CenterCardProps) {
           {/* Sports chips */}
           <div className="flex flex-wrap gap-1.5">
             {center.sports.map((sport) => (
-              <span key={sport} className="px-2.5 py-1 rounded-full bg-muted/80 text-foreground text-[11px] font-medium flex items-center gap-1 border border-border/40">
+              <span key={sport} className="px-2.5 py-1 rounded-full bg-muted/60 text-foreground text-[11px] font-medium flex items-center gap-1 border border-border/30 hover:border-primary/20 transition-colors">
                 <span className="text-sm">{sportIcons[sport] || "🏅"}</span> {sport}
               </span>
             ))}
           </div>
 
           {/* Meta info */}
-          <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-4 text-[11px] text-muted-foreground">
+            <span className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" /> {center.hours}
             </span>
             {center.ageRange && (
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5" /> {center.ageRange}
               </span>
             )}
             {center.priceRange && (
-              <span className="flex items-center gap-1 text-primary font-semibold">
+              <span className="flex items-center gap-1.5 text-primary font-bold">
                 <Banknote className="w-3.5 h-3.5" /> {center.priceRange}
               </span>
             )}
@@ -98,17 +99,19 @@ export function CenterCard({ center }: CenterCardProps) {
           {/* Expandable details */}
           <button
             onClick={() => setExpanded(!expanded)}
-            className="text-[11px] text-primary font-semibold flex items-center gap-1 hover:underline"
+            className="text-[11px] text-primary font-bold flex items-center gap-1.5 hover:underline underline-offset-2"
           >
             {expanded ? "إخفاء التفاصيل" : "المزيد من التفاصيل"}
-            {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            <div className={cn("w-5 h-5 rounded-md bg-primary/8 flex items-center justify-center transition-transform", expanded && "rotate-180")}>
+              <ChevronDown className="w-3 h-3" />
+            </div>
           </button>
 
           {expanded && (
-            <div className="space-y-2 animate-fade-in bg-muted/20 rounded-xl p-3 border border-border/30">
+            <div className="space-y-2.5 animate-fade-in bg-muted/20 rounded-2xl p-4 border border-border/20">
               <div className="flex items-center gap-2 text-xs">
                 <Phone className="w-3.5 h-3.5 text-muted-foreground" />
-                <a href={`tel:${center.phone}`} className="text-foreground font-medium hover:text-primary" dir="ltr">{center.phone}</a>
+                <a href={`tel:${center.phone}`} className="text-foreground font-medium hover:text-primary transition-colors" dir="ltr">{center.phone}</a>
               </div>
               <div className="flex items-start gap-2 text-xs">
                 <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5" />
@@ -125,7 +128,7 @@ export function CenterCard({ center }: CenterCardProps) {
           <div className="flex gap-2 pt-1">
             <Button
               size="sm"
-              className="flex-1 gradient-primary text-primary-foreground rounded-xl text-xs h-9 press-effect shadow-sm"
+              className="flex-1 gradient-primary text-primary-foreground rounded-xl text-xs h-10 press-effect shadow-soft shine-effect"
               onClick={() => window.open(`https://maps.google.com/maps?q=${center.lat},${center.lng}`)}
             >
               <Navigation className="w-3.5 h-3.5 ml-1.5" /> خريطة
@@ -133,29 +136,29 @@ export function CenterCard({ center }: CenterCardProps) {
             <Button
               size="sm"
               variant="outline"
-              className="rounded-xl text-xs h-9 px-3 border-border/60 hover:border-emerald-400 hover:bg-emerald-500/5 hover:text-emerald-600"
+              className="rounded-xl text-xs h-10 px-3.5 border-border/40 hover:border-emerald-400 hover:bg-emerald-500/5 hover:text-emerald-600 transition-all"
               onClick={handleWhatsApp}
               aria-label="تواصل عبر واتساب"
             >
-              <MessageCircle className="w-3.5 h-3.5" />
+              <MessageCircle className="w-4 h-4" />
             </Button>
             <Button
               size="sm"
               variant="outline"
-              className="rounded-xl text-xs h-9 px-3 border-border/60 hover:border-primary/40"
+              className="rounded-xl text-xs h-10 px-3.5 border-border/40 hover:border-primary/30 transition-all"
               onClick={handleShare}
               aria-label="مشاركة"
             >
-              {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-primary" /> : <Share2 className="w-3.5 h-3.5" />}
+              {copied ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Share2 className="w-4 h-4" />}
             </Button>
             {center.website && (
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-xl text-xs h-9 px-3 border-border/60 hover:border-primary/40"
+                className="rounded-xl text-xs h-10 px-3.5 border-border/40 hover:border-primary/30 transition-all"
                 onClick={() => window.open(center.website, "_blank")}
               >
-                <ExternalLink className="w-3.5 h-3.5" />
+                <ExternalLink className="w-4 h-4" />
               </Button>
             )}
           </div>

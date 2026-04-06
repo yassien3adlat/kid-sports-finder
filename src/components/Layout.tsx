@@ -45,14 +45,14 @@ const NavButton = memo(function NavButton({
       <button
         onClick={onClick}
         className={cn(
-          "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-semibold press-effect",
+          "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-semibold press-effect group/nav",
           isActive
-            ? "gradient-primary text-primary-foreground shadow-soft"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+            ? "gradient-primary text-primary-foreground shadow-[var(--shadow-sm)]"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
         )}
         aria-current={isActive ? "page" : undefined}
       >
-        <item.icon className={cn("w-5 h-5", isActive && "stroke-[2.5px]")} aria-hidden="true" />
+        <item.icon className={cn("w-5 h-5 transition-transform", isActive ? "stroke-[2.5px]" : "group-hover/nav:scale-110")} aria-hidden="true" />
         <span>{item.label}</span>
       </button>
     );
@@ -68,12 +68,14 @@ const NavButton = memo(function NavButton({
       aria-current={isActive ? "page" : undefined}
       aria-label={item.label}
     >
-      <div className={cn("relative transition-all", isActive && "scale-110")}>
+      <div className={cn("relative transition-all duration-200", isActive && "scale-110 -translate-y-0.5")}>
         <item.icon className={cn("w-5 h-5 transition-all", isActive && "stroke-[2.5px]")} aria-hidden="true" />
-        {isActive && <span className="absolute -inset-2 rounded-full bg-primary/10 -z-10" />}
+        {isActive && <span className="absolute -inset-2.5 rounded-full bg-primary/8 -z-10" />}
       </div>
-      <span className="text-[10px] font-semibold leading-none">{item.label}</span>
-      {isActive && <span className="absolute -bottom-0 w-6 h-0.5 rounded-full bg-primary" />}
+      <span className={cn("text-[10px] font-semibold leading-none transition-all", isActive && "text-primary font-bold")}>{item.label}</span>
+      {isActive && (
+        <span className="absolute -bottom-0 w-6 h-[3px] rounded-full gradient-primary shadow-[0_0_8px_hsl(var(--primary)/0.3)]" />
+      )}
     </button>
   );
 });
@@ -92,12 +94,12 @@ export function Layout({ children, hideNav }: LayoutProps) {
       {/* Desktop Sidebar */}
       {!hideNav && (
         <aside
-          className="hidden md:flex flex-col w-64 border-l border-border bg-card/50 fixed inset-y-0 right-0 z-40"
+          className="hidden md:flex flex-col w-64 border-l border-border/50 bg-card/60 backdrop-blur-sm fixed inset-y-0 right-0 z-40"
           aria-label="القائمة الجانبية"
         >
-          <div className="p-5 border-b border-border">
-            <button onClick={() => handleNav("/dashboard")} className="flex items-center gap-2 press-effect">
-              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
+          <div className="p-5 border-b border-border/50">
+            <button onClick={() => handleNav("/dashboard")} className="flex items-center gap-2.5 press-effect group">
+              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft group-hover:shadow-glow transition-shadow">
                 <Trophy className="w-5 h-5 text-primary-foreground" aria-hidden="true" />
               </div>
               <div className="text-right">
@@ -119,18 +121,18 @@ export function Layout({ children, hideNav }: LayoutProps) {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-border space-y-3">
+          <div className="p-4 border-t border-border/50 space-y-3">
             {/* Quick tip */}
-            <div className="rounded-xl bg-primary/5 p-3 border border-primary/10">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Sparkles className="w-3 h-3 text-primary" />
-                <p className="text-[10px] font-bold text-foreground">نصيحة اليوم</p>
+            <div className="rounded-2xl bg-primary/5 p-4 border border-primary/10">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <p className="text-[11px] font-bold text-foreground">نصيحة اليوم</p>
               </div>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
                 شجّع طفلك على ممارسة 60 دقيقة نشاط بدني يومياً
               </p>
             </div>
-            <div className="rounded-xl bg-muted/50 p-3 text-center">
+            <div className="rounded-xl bg-muted/40 p-3 text-center">
               <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} Helm</p>
             </div>
           </div>
@@ -144,11 +146,18 @@ export function Layout({ children, hideNav }: LayoutProps) {
         </main>
       </div>
 
-      {/* Mobile Bottom Tab Bar */}
+      {/* Mobile Bottom Tab Bar — Glassmorphism */}
       {!hideNav && (
         <nav
-          className="fixed bottom-0 inset-x-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border md:hidden safe-bottom"
+          className="fixed bottom-0 inset-x-0 z-50 md:hidden safe-bottom"
           aria-label="القائمة الرئيسية"
+          style={{
+            background: 'hsl(var(--card) / 0.82)',
+            backdropFilter: 'blur(24px) saturate(1.8)',
+            WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
+            borderTop: '1px solid hsl(var(--border) / 0.3)',
+            boxShadow: '0 -4px 20px hsl(var(--foreground) / 0.04)',
+          }}
         >
           <div className="flex items-center justify-around h-16 px-2">
             {navItems.map((item) => (
