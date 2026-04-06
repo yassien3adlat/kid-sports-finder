@@ -162,9 +162,11 @@ const Index = () => {
         role="navigation"
         aria-label="التنقل الرئيسي"
         style={{
-          background: `hsl(var(--card) / ${0.6 + navOpacity * 0.3})`,
+          background: navOpacity > 0.5
+            ? `hsl(var(--card) / ${0.6 + navOpacity * 0.3})`
+            : `rgba(0,0,0,${navOpacity * 0.4})`,
           backdropFilter: `blur(${8 + navOpacity * 16}px) saturate(${1 + navOpacity * 0.8})`,
-          borderBottom: `1px solid hsl(var(--border) / ${navOpacity * 0.5})`,
+          borderBottom: `1px solid ${navOpacity > 0.5 ? `hsl(var(--border) / ${navOpacity * 0.5})` : `rgba(255,255,255,${navOpacity * 0.08})`}`,
           boxShadow: navOpacity > 0.5 ? 'var(--shadow-sm)' : 'none',
         }}
       >
@@ -174,8 +176,8 @@ const Index = () => {
               <Trophy className="w-5 h-5 text-primary-foreground" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-black text-foreground leading-none">Helm</span>
-              <span className="text-[9px] text-muted-foreground leading-none mt-0.5 hidden sm:block">اكتشف رياضة طفلك</span>
+              <span className={cn("text-xl font-black leading-none transition-colors", navOpacity > 0.5 ? "text-foreground" : "text-white")}>Helm</span>
+              <span className={cn("text-[9px] leading-none mt-0.5 hidden sm:block transition-colors", navOpacity > 0.5 ? "text-muted-foreground" : "text-white/50")}>اكتشف رياضة طفلك</span>
             </div>
           </div>
           <div className="flex items-center gap-2.5">
@@ -183,7 +185,7 @@ const Index = () => {
               onClick={() => navigate("/auth")}
               variant="ghost"
               size="sm"
-              className="rounded-xl hidden sm:flex text-muted-foreground hover:text-foreground"
+              className={cn("rounded-xl hidden sm:flex", navOpacity > 0.5 ? "text-muted-foreground hover:text-foreground" : "text-white/70 hover:text-white hover:bg-white/10")}
             >
               تسجيل الدخول
             </Button>
