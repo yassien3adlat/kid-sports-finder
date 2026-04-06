@@ -1,22 +1,116 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Lovable App</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <!-- Performance: DNS prefetch & preconnect for critical origins -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- PWA & Theme -->
+    <meta name="theme-color" content="#2e9e6e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a3a2a" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Primary Meta Tags -->
+    <title>Helm - اكتشف الرياضة المناسبة لطفلك | اختبار قدرات رياضية للأطفال</title>
+    <meta name="description" content="تطبيق Helm الذكي يحلل 6 قدرات بدنية وذهنية لطفلك ويقترح الرياضة المناسبة. اختبار مجاني + دليل 50+ مركز تدريب في مصر + متابعة أسبوعية." />
+    <meta name="author" content="Helm" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="keywords" content="رياضة أطفال, اختبار قدرات, أكاديمية رياضية, كرة قدم أطفال, سباحة أطفال, مراكز تدريب, Helm" />
+
+    <!-- Apple PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Helm" />
+    <link rel="apple-touch-icon" href="/favicon.ico" />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://helm.app/" />
+    <meta property="og:title" content="Helm - اكتشف الرياضة المناسبة لطفلك" />
+    <meta property="og:description" content="تطبيق ذكي يحلل قدرات طفلك البدنية والذهنية ويقترح الرياضة الأنسب. مجاني 100%." />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ar_EG" />
+    <meta property="og:site_name" content="Helm" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
+    <meta name="twitter:url" content="https://helm.app/" />
+    <meta name="twitter:title" content="Helm - اكتشف الرياضة المناسبة لطفلك" />
+    <meta name="twitter:description" content="تطبيق ذكي يحلل قدرات طفلك البدنية والذهنية ويقترح الرياضة الأنسب. مجاني 100%." />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- Canonical & Manifest -->
+    <link rel="canonical" href="https://helm.app/" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Schema.org JSON-LD: WebApplication + Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Helm",
+      "alternateName": "هيلم",
+      "description": "تطبيق ذكي يساعد أولياء الأمور على اكتشاف الرياضة المناسبة لأطفالهم ومتابعة تطورهم الرياضي",
+      "url": "https://helm.app",
+      "applicationCategory": "SportsApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "ar",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareVersion": "2.0.0",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EGP"
+      },
+      "featureList": [
+        "اختبار القدرات الرياضية للأطفال",
+        "توصيات الرياضة المناسبة",
+        "متابعة التقدم الأسبوعي",
+        "دليل مراكز التدريب",
+        "نصائح غذائية ورياضية"
+      ],
+      "screenshot": "https://lovable.dev/opengraph-image-p98pqg.png",
+      "author": {
+        "@type": "Organization",
+        "name": "Helm",
+        "url": "https://helm.app"
+      }
+    }
+    </script>
+
+    <!-- FAQ Schema for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "كيف يعمل تطبيق Helm؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "يقوم التطبيق بتحليل 6 قدرات بدنية وذهنية لطفلك من خلال 12 سؤال ذكي، ثم يقترح الرياضات المناسبة مع نسب التوافق لكل رياضة."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "هل تطبيق Helm مجاني؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "نعم، تطبيق Helm مجاني بالكامل. يمكنك تسجيل أطفالك وإجراء اختبارات القدرات ومتابعة تقدمهم بدون أي رسوم."
+          }
+        }
+      ]
+    }
+    </script>
   </head>
 
   <body>
