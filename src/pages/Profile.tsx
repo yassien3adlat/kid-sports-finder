@@ -104,9 +104,11 @@ const ProfileContent = () => {
       <PageHeader title="الملف الشخصي" />
       <div className="container mx-auto px-4 pb-8 max-w-lg space-y-5">
         {/* Profile Header */}
-        <Card className="shadow-card border-border/50 overflow-hidden animate-fade-in">
-          <div className="gradient-hero p-6 text-center">
-            <div className="w-20 h-20 rounded-2xl bg-primary-foreground/20 flex items-center justify-center mx-auto mb-3 text-3xl font-black text-primary-foreground border-2 border-primary-foreground/10">
+        <Card className="shadow-[var(--shadow-lg)] border-border/30 overflow-hidden animate-fade-in">
+          <div className="gradient-hero p-6 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-32 h-32 rounded-full bg-primary-foreground/5 -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-1/4 w-20 h-20 rounded-full bg-primary-foreground/[0.03]" />
+            <div className="w-20 h-20 rounded-2xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center mx-auto mb-3 text-3xl font-black text-primary-foreground border-2 border-primary-foreground/10 shadow-[var(--shadow-md)] relative">
               {initial}
             </div>
             <h2 className="text-xl font-black text-primary-foreground">{fullName || "مستخدم"}</h2>

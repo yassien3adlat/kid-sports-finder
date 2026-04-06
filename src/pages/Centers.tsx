@@ -70,13 +70,15 @@ function CentersContent() {
       <PageHeader title="أماكن التدريب" backTo="/dashboard" />
       <div className="container mx-auto px-4 pb-8 space-y-4">
         {/* Hero Stats */}
-        <Card className="shadow-card border-border/50 overflow-hidden">
-          <div className="gradient-hero p-5 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-primary-foreground/20 flex items-center justify-center mx-auto mb-2">
+        <Card className="shadow-[var(--shadow-lg)] border-border/30 overflow-hidden">
+          <div className="gradient-hero p-6 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-32 h-32 rounded-full bg-primary-foreground/5 -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-1/4 w-20 h-20 rounded-full bg-primary-foreground/[0.03]" />
+            <div className="w-14 h-14 rounded-2xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center mx-auto mb-3 border border-primary-foreground/10 shadow-[var(--shadow-md)] relative">
               <MapPin className="w-7 h-7 text-primary-foreground" />
             </div>
-            <h2 className="text-lg font-black text-primary-foreground">دليل الأكاديميات</h2>
-            <p className="text-primary-foreground/70 text-xs mt-1">أفضل مراكز التدريب في مصر</p>
+            <h2 className="text-lg font-black text-primary-foreground relative">دليل الأكاديميات</h2>
+            <p className="text-primary-foreground/70 text-xs mt-1 relative">أفضل مراكز التدريب في مصر</p>
           </div>
           <CardContent className="p-3">
             <div className="flex items-center justify-around text-center">

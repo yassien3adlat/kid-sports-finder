@@ -399,7 +399,7 @@ function AssessmentContent() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>السؤال {currentTotal} من {totalQuestions}</span>
-                <span className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-full">
+                <span className="flex items-center gap-1.5 bg-muted/50 px-2.5 py-1 rounded-full border border-border/30">
                   {cat && <cat.icon className={cn("w-3.5 h-3.5", cat.color)} />}
                   <span className="font-medium">{cat?.label}</span>
                 </span>
@@ -411,27 +411,43 @@ function AssessmentContent() {
                   <div
                     key={c.key}
                     className={cn(
-                      "w-2 h-2 rounded-full transition-all",
-                      c.key === currentCategory ? "w-5 bg-primary" :
-                      completedCategories.has(c.key) ? "bg-primary/40" : "bg-border"
+                      "h-2 rounded-full transition-all duration-300",
+                      c.key === currentCategory ? "w-6 bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.3)]" :
+                      completedCategories.has(c.key) ? "w-2 bg-primary/40" : "w-2 bg-border"
                     )}
                     title={c.label}
                   />
                 ))}
               </div>
             </div>
-            <Card className="shadow-card border-border/50">
+            <Card className="card-premium border-border/30 bg-card/90 backdrop-blur-sm">
               <CardContent className="p-5 space-y-5">
-                <h3 className="text-lg font-bold text-foreground leading-relaxed">{q.text}</h3>
-                <div className="space-y-2">
+                <div className="flex items-start gap-3">
+                  {cat && (
+                    <div className={cn("feature-icon w-11 h-11 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 shadow-sm",
+                      cat.key === "speed" ? "from-amber-500 to-yellow-400" :
+                      cat.key === "endurance" ? "from-rose-500 to-pink-400" :
+                      cat.key === "focus" ? "from-violet-500 to-purple-400" :
+                      cat.key === "reaction" ? "from-blue-500 to-cyan-400" :
+                      cat.key === "teamwork" ? "from-emerald-500 to-green-400" :
+                      cat.key === "accuracy" ? "from-orange-500 to-amber-400" :
+                      cat.key === "flexibility" ? "from-cyan-500 to-teal-400" :
+                      "from-red-500 to-rose-400"
+                    )}>
+                      <cat.icon className="w-5 h-5 text-primary-foreground" />
+                    </div>
+                  )}
+                  <h3 className="text-lg font-bold text-foreground leading-relaxed pt-1.5">{q.text}</h3>
+                </div>
+                <div className="space-y-2.5">
                   {q.options.map((opt, i) => (
                     <button key={i} onClick={() => handleAnswer(i)}
-                      className="w-full text-right p-4 rounded-xl border-2 border-border hover:border-primary/50 hover:bg-primary/5 transition-all press-effect text-sm font-medium text-foreground">
-                      <span className="flex items-center gap-2">
-                        <span className="w-7 h-7 rounded-full border-2 border-border flex items-center justify-center text-xs font-bold text-muted-foreground flex-shrink-0">
+                      className="w-full text-right p-4 rounded-2xl border-2 border-border/40 hover:border-primary/50 hover:bg-primary/[0.03] transition-all press-effect text-sm font-medium text-foreground group/opt hover:shadow-[var(--shadow-sm)]">
+                      <span className="flex items-center gap-3">
+                        <span className="w-8 h-8 rounded-xl border-2 border-border/50 group-hover/opt:border-primary/40 group-hover/opt:bg-primary/8 flex items-center justify-center text-xs font-bold text-muted-foreground group-hover/opt:text-primary flex-shrink-0 transition-all">
                           {["أ", "ب", "ج", "د"][i]}
                         </span>
-                        {opt}
+                        <span className="group-hover/opt:translate-x-[-2px] transition-transform">{opt}</span>
                       </span>
                     </button>
                   ))}
@@ -439,7 +455,7 @@ function AssessmentContent() {
               </CardContent>
             </Card>
             {currentQ > 0 && (
-              <Button variant="ghost" onClick={goBack} className="text-muted-foreground">
+              <Button variant="ghost" onClick={goBack} className="text-muted-foreground hover:text-foreground">
                 <ChevronRight className="w-4 h-4 ml-1" /> السؤال السابق
               </Button>
             )}
@@ -452,7 +468,7 @@ function AssessmentContent() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>السؤال {currentTotal} من {totalQuestions}</span>
-                <span className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1 rounded-full text-primary font-medium">
+                <span className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1 rounded-full text-primary font-medium border border-primary/15">
                   {currentPrefQ === 0 && <><Smile className="w-3.5 h-3.5" /> بيحب إيه</>}
                   {currentPrefQ === 1 && <><ThumbsDown className="w-3.5 h-3.5" /> بيكره إيه</>}
                   {currentPrefQ === 2 && <><Star className="w-3.5 h-3.5" /> شخصيته</>}
@@ -460,24 +476,26 @@ function AssessmentContent() {
               </div>
               <Progress value={progress} className="h-2.5 rounded-full" />
             </div>
-            <Card className="shadow-card border-border/50">
+            <Card className="card-premium border-border/30 bg-card/90 backdrop-blur-sm overflow-hidden">
               <div className="h-1.5 bg-gradient-to-r from-primary via-secondary to-accent" />
               <CardContent className="p-5 space-y-5">
                 <div>
-                  <p className="text-xs text-primary font-bold mb-1">🎯 أسئلة التفضيلات</p>
+                  <p className="text-xs text-primary font-bold mb-1.5 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" /> أسئلة التفضيلات
+                  </p>
                   <h3 className="text-lg font-bold text-foreground leading-relaxed">{prefQ.text}</h3>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {prefQ.options.map((opt, i) => (
                     <button key={i} onClick={() => handlePrefAnswer(i)}
-                      className="w-full text-right p-4 rounded-xl border-2 border-border hover:border-secondary/50 hover:bg-secondary/5 transition-all press-effect text-sm font-medium text-foreground">
-                      {opt.label}
+                      className="w-full text-right p-4 rounded-2xl border-2 border-border/40 hover:border-secondary/50 hover:bg-secondary/[0.03] transition-all press-effect text-sm font-medium text-foreground group/opt hover:shadow-[var(--shadow-sm)]">
+                      <span className="group-hover/opt:translate-x-[-2px] transition-transform inline-block">{opt.label}</span>
                     </button>
                   ))}
                 </div>
               </CardContent>
             </Card>
-            <Button variant="ghost" onClick={goBack} className="text-muted-foreground">
+            <Button variant="ghost" onClick={goBack} className="text-muted-foreground hover:text-foreground">
               <ChevronRight className="w-4 h-4 ml-1" /> السؤال السابق
             </Button>
           </div>
