@@ -201,28 +201,23 @@ const Index = () => {
 
       {/* ═══ HERO ═══ */}
       <section className="relative min-h-[100vh] flex items-center overflow-hidden" aria-labelledby="hero-heading">
-        {/* Background Image with Parallax */}
-        <div className="absolute inset-0" style={{ transform: `translateY(${scrollY * 0.3}px)` }}>
-          <img
-            src={heroImage}
-            alt="أطفال يمارسون الرياضة بسعادة"
-            className="w-full h-[120%] object-cover"
-            width={1920}
-            height={1080}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-          />
-        </div>
+        {/* Deep gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(160,35%,8%)] via-[hsl(160,25%,12%)] to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(160,40%,6%,0.5)] via-transparent to-[hsl(215,50%,10%,0.3)]" />
 
-        {/* Gradient Overlay — Multi-layer */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-background/20" />
+        {/* 3D Scene */}
+        <Suspense fallback={null}>
+          <HeroScene3D />
+        </Suspense>
 
-        {/* Floating Orbs */}
-        <div className="orb orb-primary w-72 h-72 top-20 right-10 animate-float-slow" />
-        <div className="orb orb-accent w-56 h-56 bottom-40 left-20 animate-float-delayed" />
-        <div className="orb orb-secondary w-40 h-40 top-1/3 left-1/4 animate-float" style={{ animationDelay: '3s' }} />
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03] z-[2]" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--primary)) 1px, transparent 0)`,
+          backgroundSize: '40px 40px',
+        }} />
+
+        {/* Bottom gradient fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent z-[3]" />
 
         <div className="relative container mx-auto px-6 pt-32 pb-20 text-center">
           {/* Badge */}
