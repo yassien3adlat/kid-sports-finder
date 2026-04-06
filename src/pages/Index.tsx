@@ -488,7 +488,7 @@ const Index = () => {
       </section>
 
       {/* ═══ CTA ═══ */}
-      <section className="relative overflow-hidden py-28" aria-labelledby="cta-heading">
+      <section className="relative overflow-hidden py-20 sm:py-28" aria-labelledby="cta-heading">
         <div className="absolute inset-0 gradient-hero" />
         {/* Decorative circles */}
         <div className="absolute top-10 right-10 w-64 h-64 rounded-full border border-primary-foreground/5" />
