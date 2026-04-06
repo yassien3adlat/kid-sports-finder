@@ -421,11 +421,11 @@ const Index = () => {
       </section>
 
       {/* ═══ TESTIMONIALS ═══ */}
-      <section className="relative overflow-hidden py-24" aria-labelledby="testimonials-heading">
+      <section className="relative overflow-hidden py-16 sm:py-24" aria-labelledby="testimonials-heading">
         <div className="absolute inset-0 gradient-surface" />
         <div className="orb orb-secondary w-80 h-80 bottom-0 right-0 opacity-[0.05]" />
 
-        <div className="relative container mx-auto px-6">
+        <div className="relative container mx-auto px-4 sm:px-6">
           <AnimatedSection className="text-center mb-14">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-bold mb-5 border border-primary/10">
               <Star className="w-3.5 h-3.5" /> آراء المستخدمين
