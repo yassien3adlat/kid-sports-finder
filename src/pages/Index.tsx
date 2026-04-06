@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useInView } from "@/hooks/useInView";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -9,8 +9,9 @@ import {
   Sparkles, Shield, Star, Quote, CheckCircle2, ArrowLeft, Zap, Heart,
   ChevronDown, MessageSquare, Award, Rocket, Clock, Play, ArrowDown,
 } from "lucide-react";
-import heroImage from "@/assets/hero-kids-sports.jpg";
 import { cn } from "@/lib/utils";
+
+const HeroScene3D = lazy(() => import("@/components/HeroScene3D"));
 
 const features = [
   { icon: Users, title: "تسجيل الأطفال", description: "سجّل بيانات أطفالك بسهولة وتابع تطورهم الرياضي مع ملفات شخصية متكاملة", color: "from-primary to-emerald-500" },
