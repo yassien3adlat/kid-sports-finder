@@ -131,21 +131,22 @@ function Scene() {
       <directionalLight position={[-3, 3, -3]} intensity={0.3} color="#66d9a0" />
       <pointLight position={[0, 0, 3]} intensity={0.4} color="#f5a623" />
 
-      {/* Main large ball — football-like */}
-      <SportBall position={[2.2, 0.5, 0]} color="#2E9E6E" size={0.7} speed={0.7} />
+      {/* Main large ball — pushed to edges */}
+      <SportBall position={[4, 1.5, -1]} color="#2E9E6E" size={0.65} speed={0.7} />
 
-      {/* Secondary balls */}
-      <SportBall position={[-2.5, -0.8, -1]} color="#f5a623" size={0.45} speed={1.2} />
-      <SportBall position={[-1, 1.5, -0.5]} color="#3B82F6" size={0.35} speed={0.9} />
-      <SportBall position={[1.5, -1.5, 0.5]} color="#ef4444" size={0.3} speed={1.1} />
+      {/* Secondary balls — corners */}
+      <SportBall position={[-4.5, -1.2, -1.5]} color="#f5a623" size={0.4} speed={1.2} />
+      <SportBall position={[-3.5, 2.2, -0.5]} color="#3B82F6" size={0.3} speed={0.9} />
+      <SportBall position={[3.5, -2, 0.5]} color="#ef4444" size={0.25} speed={1.1} />
+      <SportBall position={[4.5, -1.5, -2]} color="#a855f7" size={0.2} speed={1.3} />
 
-      {/* Rings — like olympic rings or hoops */}
-      <FloatingRing position={[-2, 0.8, 0.5]} color="#2E9E6E" speed={0.8} />
-      <FloatingRing position={[3, -0.5, -1]} color="#f5a623" speed={1.0} />
+      {/* Rings — at edges */}
+      <FloatingRing position={[-4, 1.5, 0.5]} color="#2E9E6E" speed={0.8} />
+      <FloatingRing position={[5, -0.8, -1]} color="#f5a623" speed={1.0} />
 
-      {/* Cubes — like building blocks */}
-      <FloatingCube position={[0.5, -1.2, 1]} color="#3B82F6" speed={0.6} />
-      <FloatingCube position={[-3, -1.5, 0]} color="#a855f7" speed={0.9} />
+      {/* Cubes — corners only */}
+      <FloatingCube position={[-5, -2, 1]} color="#3B82F6" speed={0.6} />
+      <FloatingCube position={[3, 2.5, -1.5]} color="#a855f7" speed={0.9} />
 
       {/* Particles */}
       <Particles count={80} />
