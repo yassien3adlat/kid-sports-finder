@@ -354,12 +354,11 @@ const Index = () => {
             </h2>
           </AnimatedSection>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 max-w-5xl mx-auto">
             {steps.map((item, i) => (
               <AnimatedSection key={i} delay={i * 150} className="text-center group">
-                <div className="relative mb-5">
-                  {/* Step number */}
-                  <div className="w-20 h-20 rounded-3xl gradient-primary flex items-center justify-center mx-auto text-primary-foreground font-black text-3xl group-hover:scale-110 transition-all duration-300 shadow-[var(--shadow-md)] group-hover:shadow-[var(--shadow-glow)] relative overflow-hidden shine-effect">
+                <div className="relative mb-3 sm:mb-5">
+                  <div className="w-14 sm:w-20 h-14 sm:h-20 rounded-2xl sm:rounded-3xl gradient-primary flex items-center justify-center mx-auto text-primary-foreground font-black text-xl sm:text-3xl group-hover:scale-110 transition-all duration-300 shadow-[var(--shadow-md)] group-hover:shadow-[var(--shadow-glow)] relative overflow-hidden shine-effect">
                     {item.step}
                   </div>
                   {/* Connector line */}
