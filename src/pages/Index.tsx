@@ -319,7 +319,7 @@ const Index = () => {
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {features.map((feature, i) => (
             <AnimatedSection key={i} delay={i * 100}>
               <Card className="card-premium border-border/30 group h-full bg-card/80 backdrop-blur-sm">
