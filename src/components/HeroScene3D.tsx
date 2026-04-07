@@ -1,6 +1,6 @@
-import { useRef, useMemo, Suspense, useEffect, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, MeshDistortMaterial, Torus, RoundedBox } from "@react-three/drei";
+import { useRef, useMemo, Suspense, useEffect, useState, useCallback } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Float, MeshDistortMaterial, Torus, RoundedBox, Trail } from "@react-three/drei";
 import * as THREE from "three";
 
 /* ═══ Hook: detect mobile ═══ */
@@ -15,6 +15,36 @@ function useIsMobile() {
   return mobile;
 }
 
+/* ═══ Mouse tracker — smooth parallax ═══ */
+const mousePos = new THREE.Vector2(0, 0);
+function useMouseParallax(factor = 0.3) {
+  const ref = useRef<THREE.Group>(null!);
+  useFrame(() => {
+    if (ref.current) {
+      ref.current.position.x += (mousePos.x * factor - ref.current.position.x) * 0.02;
+      ref.current.position.y += (mousePos.y * factor - ref.current.position.y) * 0.02;
+    }
+  });
+  return ref;
+}
+
+/* ═══ Glow ring — orbiting ring around objects ═══ */
+function GlowRing({ radius = 0.5, color = "#2E9E6E", speed = 1 }: { radius?: number; color?: string; speed?: number }) {
+  const ref = useRef<THREE.Mesh>(null!);
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.x = state.clock.elapsedTime * 0.5 * speed;
+      ref.current.rotation.z = state.clock.elapsedTime * 0.3 * speed;
+    }
+  });
+  return (
+    <mesh ref={ref}>
+      <torusGeometry args={[radius, 0.008, 8, 48]} />
+      <meshBasicMaterial color={color} transparent opacity={0.4} />
+    </mesh>
+  );
+}
+
 /* ════════════════════════════════════════════
    SPORTS EQUIPMENT — 3D Geometry Shapes
    ════════════════════════════════════════════ */
@@ -25,6 +55,9 @@ function Dumbbell({ position, color = "#2E9E6E", speed = 1, scale = 0.6 }: { pos
     if (group.current) {
       group.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.5 * speed) * 0.3;
       group.current.rotation.x = state.clock.elapsedTime * 0.15 * speed;
+      // Breathing scale
+      const s = scale + Math.sin(state.clock.elapsedTime * 0.8) * 0.02;
+      group.current.scale.setScalar(s);
     }
   });
 
@@ -36,6 +69,7 @@ function Dumbbell({ position, color = "#2E9E6E", speed = 1, scale = 0.6 }: { pos
         <mesh position={[0, -0.85, 0]}><cylinderGeometry args={[0.2, 0.2, 0.1, 16]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.3} /></mesh>
         <mesh position={[0, 0.7, 0]}><cylinderGeometry args={[0.25, 0.25, 0.15, 16]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.25} /></mesh>
         <mesh position={[0, 0.85, 0]}><cylinderGeometry args={[0.2, 0.2, 0.1, 16]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.3} /></mesh>
+        <GlowRing radius={0.5} color={color} speed={speed * 0.8} />
       </group>
     </Float>
   );
@@ -150,6 +184,25 @@ function Whistle({ position, speed = 1, scale = 0.5 }: { position: [number, numb
   );
 }
 
+/* ═══ Orbiting energy ring — adds dynamism ═══ */
+function EnergyOrbit({ radius = 3, speed = 0.3, color = "#2E9E6E" }: { radius?: number; speed?: number; color?: string }) {
+  const ref = useRef<THREE.Mesh>(null!);
+  useFrame((state) => {
+    if (ref.current) {
+      const t = state.clock.elapsedTime * speed;
+      ref.current.position.x = Math.cos(t) * radius;
+      ref.current.position.y = Math.sin(t) * radius * 0.5;
+      ref.current.position.z = Math.sin(t * 0.7) * 1.5;
+    }
+  });
+  return (
+    <mesh ref={ref}>
+      <sphereGeometry args={[0.06, 16, 16]} />
+      <meshBasicMaterial color={color} transparent opacity={0.8} />
+    </mesh>
+  );
+}
+
 function Particles({ count = 50 }: { count?: number }) {
   const mesh = useRef<THREE.Points>(null!);
   const positions = useMemo(() => {
@@ -170,29 +223,69 @@ function Particles({ count = 50 }: { count?: number }) {
   );
 }
 
-/* ═══ DESKTOP Scene — all equipment ═══ */
+/* ═══ Floating sparkle particles ═══ */
+function Sparkles({ count = 20 }: { count?: number }) {
+  const mesh = useRef<THREE.Points>(null!);
+  const positions = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 12;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 7;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 4;
+    }
+    return pos;
+  }, [count]);
+  useFrame((state) => {
+    if (mesh.current) {
+      mesh.current.rotation.y = state.clock.elapsedTime * 0.03;
+      mesh.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.05;
+      // Pulsing size
+      const mat = mesh.current.material as THREE.PointsMaterial;
+      mat.size = 0.05 + Math.sin(state.clock.elapsedTime * 2) * 0.02;
+    }
+  });
+  return (
+    <points ref={mesh}>
+      <bufferGeometry><bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} /></bufferGeometry>
+      <pointsMaterial size={0.05} color="#fbbf24" transparent opacity={0.6} sizeAttenuation />
+    </points>
+  );
+}
+
+/* ═══ DESKTOP Scene ═══ */
 function DesktopScene() {
+  const parallaxGroup = useMouseParallax(0.4);
   return (
     <>
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 5, 5]} intensity={0.9} />
       <directionalLight position={[-3, 3, -3]} intensity={0.3} color="#66d9a0" />
       <pointLight position={[0, 0, 4]} intensity={0.3} color="#f5a623" />
+      <pointLight position={[-4, 2, 2]} intensity={0.15} color="#3B82F6" />
 
-      <Dumbbell position={[4.2, 2, -1]} color="#2E9E6E" speed={0.7} />
-      <SwimmingGoggles position={[-4, 1.8, 0]} color="#3B82F6" speed={0.8} />
-      <Football position={[4.8, -0.5, -0.5]} color="#f5f5f5" speed={1} size={0.35} />
-      <Basketball position={[-4.5, -1.5, 0.5]} speed={0.9} size={0.3} />
-      <TennisRacket position={[3.5, -2.2, -1]} speed={0.6} />
-      <Medal position={[-2.5, 2.5, -1.5]} speed={1.1} />
-      <Whistle position={[-3, -2.5, 0]} speed={0.7} />
-      <Football position={[5.5, 1, -2]} color="#fbbf24" speed={1.3} size={0.2} />
+      <group ref={parallaxGroup}>
+        <Dumbbell position={[4.2, 2, -1]} color="#2E9E6E" speed={0.7} />
+        <SwimmingGoggles position={[-4, 1.8, 0]} color="#3B82F6" speed={0.8} />
+        <Football position={[4.8, -0.5, -0.5]} color="#f5f5f5" speed={1} size={0.35} />
+        <Basketball position={[-4.5, -1.5, 0.5]} speed={0.9} size={0.3} />
+        <TennisRacket position={[3.5, -2.2, -1]} speed={0.6} />
+        <Medal position={[-2.5, 2.5, -1.5]} speed={1.1} />
+        <Whistle position={[-3, -2.5, 0]} speed={0.7} />
+        <Football position={[5.5, 1, -2]} color="#fbbf24" speed={1.3} size={0.2} />
+      </group>
+
+      {/* Orbiting energy dots */}
+      <EnergyOrbit radius={4} speed={0.4} color="#2E9E6E" />
+      <EnergyOrbit radius={3.5} speed={-0.3} color="#3B82F6" />
+      <EnergyOrbit radius={5} speed={0.25} color="#fbbf24" />
+
       <Particles count={60} />
+      <Sparkles count={25} />
     </>
   );
 }
 
-/* ═══ MOBILE Scene — fewer, smaller, closer shapes ═══ */
+/* ═══ MOBILE Scene ═══ */
 function MobileScene() {
   return (
     <>
@@ -200,27 +293,34 @@ function MobileScene() {
       <directionalLight position={[3, 4, 4]} intensity={0.8} />
       <pointLight position={[0, 0, 3]} intensity={0.25} color="#66d9a0" />
 
-      {/* Top-left: Goggles — small */}
       <SwimmingGoggles position={[-1.8, 2.8, -0.5]} color="#3B82F6" speed={0.7} scale={0.35} />
-
-      {/* Top-right: Dumbbell — small */}
       <Dumbbell position={[2, 3, -1]} color="#2E9E6E" speed={0.6} scale={0.35} />
-
-      {/* Bottom-left: Basketball */}
       <Basketball position={[-2.2, -2.8, 0]} speed={0.8} size={0.22} />
-
-      {/* Bottom-right: Football */}
       <Football position={[2.2, -2.5, -0.5]} color="#f5f5f5" speed={0.9} size={0.2} />
-
-      {/* Center-right edge: Medal */}
       <Medal position={[2.5, 0.5, -1]} speed={1} scale={0.3} />
-
-      {/* Center-left edge: Tennis Racket */}
       <TennisRacket position={[-2.5, -0.5, -0.5]} speed={0.5} scale={0.3} />
 
+      <EnergyOrbit radius={2.5} speed={0.35} color="#2E9E6E" />
+      <EnergyOrbit radius={2} speed={-0.25} color="#fbbf24" />
+
       <Particles count={30} />
+      <Sparkles count={12} />
     </>
   );
+}
+
+/* ═══ Mouse listener component ═══ */
+function MouseListener() {
+  const { size } = useThree();
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      mousePos.x = ((e.clientX / size.width) - 0.5) * 2;
+      mousePos.y = -((e.clientY / size.height) - 0.5) * 2;
+    };
+    window.addEventListener("mousemove", handler, { passive: true });
+    return () => window.removeEventListener("mousemove", handler);
+  }, [size]);
+  return null;
 }
 
 export default function HeroScene3D() {
@@ -232,9 +332,10 @@ export default function HeroScene3D() {
         camera={{ position: [0, 0, isMobile ? 8 : 7], fov: isMobile ? 50 : 42 }}
         dpr={[1, isMobile ? 1 : 1.5]}
         gl={{ antialias: !isMobile, alpha: true }}
-        style={{ pointerEvents: "none", width: "100%", height: "100%" }}
+        style={{ pointerEvents: isMobile ? "none" : "auto", width: "100%", height: "100%" }}
       >
         <Suspense fallback={null}>
+          {!isMobile && <MouseListener />}
           {isMobile ? <MobileScene /> : <DesktopScene />}
         </Suspense>
       </Canvas>
