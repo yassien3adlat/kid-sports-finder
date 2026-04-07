@@ -330,7 +330,7 @@ export default function HeroScene3D() {
   return (
     <div className="absolute inset-0 z-[1] w-full h-full" style={{ pointerEvents: "none" }}>
       <Canvas
-        camera={{ position: [0, 0, isMobile ? 8 : 7], fov: isMobile ? 50 : 42 }}
+        camera={{ position: [0, 0, isMobile ? 6 : 7], fov: isMobile ? 60 : 42 }}
         dpr={[1, isMobile ? 1 : 1.5]}
         gl={{ antialias: !isMobile, alpha: true }}
         style={{ pointerEvents: isMobile ? "none" : "auto", width: "100%", height: "100%" }}
