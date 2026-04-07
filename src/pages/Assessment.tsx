@@ -195,9 +195,11 @@ function AssessmentContent() {
   };
 
   const calculateResults = async (allAnswers: number[], allPrefAnswers: number[]) => {
+    // Step 1: Calculate raw category scores (0-100)
     const catScores: Record<string, number[]> = {};
     categories.forEach((c) => (catScores[c.key] = []));
     allAnswers.forEach((ans, i) => {
+      // Score: 0=best(3pts), 1=good(2pts), 2=avg(1pt), 3=low(0pts)
       catScores[questions[i].category].push(3 - ans);
     });
 
@@ -207,6 +209,7 @@ function AssessmentContent() {
     });
     setScores(finalScores);
 
+    // Step 2: Calculate weighted sport scores
     const sportScores: Record<string, number> = {};
     Object.entries(sportProfiles).forEach(([key, sport]) => {
       let score = 0;
@@ -214,47 +217,98 @@ function AssessmentContent() {
         score += (finalScores[dim] || 0) * weight;
       });
 
+      // Height factor — scaled by how far from average
       if (selectedChild?.height_cm && sport.idealHeight) {
         const age = selectedChild.age || 10;
         const avgHeight: Record<number, number> = { 3: 95, 4: 102, 5: 109, 6: 115, 7: 121, 8: 127, 9: 132, 10: 137, 11: 143, 12: 149, 13: 156, 14: 163, 15: 168, 16: 172, 17: 175, 18: 177 };
         const avg = avgHeight[age] || 137;
-        const isAbove = selectedChild.height_cm > avg + 5;
-        const isBelow = selectedChild.height_cm < avg - 5;
-        if (sport.idealHeight === "tall" && isAbove) score += 5;
-        if (sport.idealHeight === "tall" && isBelow) score -= 5;
-        if (sport.idealHeight === "short" && isBelow) score += 5;
-        if (sport.idealHeight === "short" && isAbove) score -= 3;
+        const deviation = (selectedChild.height_cm - avg) / avg; // normalized deviation
+        if (sport.idealHeight === "tall") {
+          score += deviation * 30; // taller = more bonus, shorter = penalty
+        } else if (sport.idealHeight === "short") {
+          score -= deviation * 25; // shorter = bonus, taller = penalty
+        }
+      }
+
+      // Age suitability adjustments
+      if (selectedChild?.age) {
+        const age = selectedChild.age;
+        // Young children (3-6): favor gymnastics, swimming; less combat
+        if (age <= 6) {
+          if (key === "gymnastics" || key === "swimming") score += 6;
+          if (key === "wrestling" || key === "karate" || key === "taekwondo") score -= 4;
+          if (key === "archery") score -= 6;
+        }
+        // Teens (13+): all sports fair, slight boost for competitive ones
+        if (age >= 13) {
+          if (key === "athletics" || key === "tennis") score += 3;
+        }
+      }
+
+      // Weight/BMI consideration
+      if (selectedChild?.weight_kg && selectedChild?.height_cm) {
+        const heightM = selectedChild.height_cm / 100;
+        const bmi = selectedChild.weight_kg / (heightM * heightM);
+        const age = selectedChild.age || 10;
+        // Rough age-adjusted BMI check (above ~85th percentile)
+        const highBMI = age <= 8 ? 18 : age <= 12 ? 21 : 24;
+        const lowBMI = age <= 8 ? 14 : age <= 12 ? 15.5 : 17;
+        if (bmi > highBMI) {
+          // Heavier kids: swimming great, gymnastics harder
+          if (key === "swimming") score += 5;
+          if (key === "wrestling" || key === "handball") score += 3;
+          if (key === "gymnastics") score -= 6;
+          if (key === "athletics") score -= 3;
+        }
+        if (bmi < lowBMI) {
+          // Leaner kids: gymnastics, athletics, swimming great
+          if (key === "gymnastics" || key === "athletics") score += 4;
+          if (key === "wrestling") score -= 3;
+        }
       }
 
       sportScores[key] = score;
     });
 
+    // Step 3: Apply preference boosts/penalties (proportional to base score)
     allPrefAnswers.forEach((ans, i) => {
       const pq = preferenceQuestions[i];
       const option = pq.options[ans] as any;
       if (option.boosts) {
         option.boosts.forEach((s: string) => {
-          if (sportScores[s] != null) sportScores[s] += 8;
+          if (sportScores[s] != null) {
+            // Proportional boost: 12% of current score, minimum +5
+            sportScores[s] += Math.max(5, sportScores[s] * 0.12);
+          }
         });
       }
       if (option.penalizes) {
         option.penalizes.forEach((s: string) => {
-          if (sportScores[s] != null) sportScores[s] -= 15;
+          if (sportScores[s] != null) {
+            // Strong penalty: 20% of current score, minimum -8
+            sportScores[s] -= Math.max(8, sportScores[s] * 0.20);
+          }
         });
       }
     });
 
+    // Step 4: Normalize to meaningful percentages (30-98 range for discrimination)
     const maxScore = Math.max(...Object.values(sportScores));
     const minScore = Math.min(...Object.values(sportScores));
     const range = maxScore - minScore || 1;
 
     const recs = Object.entries(sportProfiles)
-      .map(([key, sport]) => ({
-        name: sport.name,
-        emoji: sport.emoji,
-        desc: sport.desc,
-        pct: Math.round(((sportScores[key] - minScore) / range) * 40 + 60),
-      }))
+      .map(([key, sport]) => {
+        const normalized = (sportScores[key] - minScore) / range; // 0..1
+        // Map to 30-98 range with non-linear curve for better spread
+        const pct = Math.round(30 + Math.pow(normalized, 0.85) * 68);
+        return {
+          name: sport.name,
+          emoji: sport.emoji,
+          desc: sport.desc,
+          pct: Math.min(98, Math.max(30, pct)),
+        };
+      })
       .sort((a, b) => b.pct - a.pct)
       .slice(0, 5);
 
