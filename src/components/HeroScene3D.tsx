@@ -289,22 +289,23 @@ function DesktopScene() {
 function MobileScene() {
   return (
     <>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[3, 4, 4]} intensity={0.8} />
-      <pointLight position={[0, 0, 3]} intensity={0.25} color="#66d9a0" />
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[3, 4, 4]} intensity={1} />
+      <pointLight position={[0, 0, 3]} intensity={0.3} color="#66d9a0" />
 
-      <SwimmingGoggles position={[-1.8, 2.8, -0.5]} color="#3B82F6" speed={0.7} scale={0.35} />
-      <Dumbbell position={[2, 3, -1]} color="#2E9E6E" speed={0.6} scale={0.35} />
-      <Basketball position={[-2.2, -2.8, 0]} speed={0.8} size={0.22} />
-      <Football position={[2.2, -2.5, -0.5]} color="#f5f5f5" speed={0.9} size={0.2} />
-      <Medal position={[2.5, 0.5, -1]} speed={1} scale={0.3} />
-      <TennisRacket position={[-2.5, -0.5, -0.5]} speed={0.5} scale={0.3} />
+      {/* Closer, larger objects within tight mobile viewport */}
+      <SwimmingGoggles position={[-1.2, 2.2, 0.5]} color="#3B82F6" speed={0.7} scale={0.4} />
+      <Dumbbell position={[1.3, 2.5, 0]} color="#2E9E6E" speed={0.6} scale={0.4} />
+      <Basketball position={[-1.4, -2.2, 0.5]} speed={0.8} size={0.25} />
+      <Football position={[1.5, -2, 0]} color="#f5f5f5" speed={0.9} size={0.25} />
+      <Medal position={[1.6, 0.3, 0]} speed={1} scale={0.35} />
+      <TennisRacket position={[-1.6, -0.3, 0]} speed={0.5} scale={0.35} />
 
-      <EnergyOrbit radius={2.5} speed={0.35} color="#2E9E6E" />
-      <EnergyOrbit radius={2} speed={-0.25} color="#fbbf24" />
+      <EnergyOrbit radius={2} speed={0.35} color="#2E9E6E" />
+      <EnergyOrbit radius={1.5} speed={-0.25} color="#fbbf24" />
 
-      <Particles count={30} />
-      <Sparkles count={12} />
+      <Particles count={35} />
+      <Sparkles count={15} />
     </>
   );
 }
